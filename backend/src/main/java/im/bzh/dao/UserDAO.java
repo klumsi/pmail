@@ -14,10 +14,10 @@ public interface UserDAO extends BaseMapper<User> {
     User selectByUsername(String username);
 
     @Update("update user set password = #{password} where username = #{username}")
-    int updatePasswordByUsername(User user);
+    int updatePassword(User user);
 
     @Update("update user set nickname = #{nickname} where username = #{username}")
-    int updateNicknameByUsername(User user);
+    int updateNickname(User user);
 
     @Delete("delete from user where username = #{username}")
     int deleteUserByUsername(String username);
