@@ -25,6 +25,7 @@ public class UploadController {
             tempFile.deleteOnExit();
             return new R(true, null, tempFile.getName());
         } catch (Exception e) {
+            e.printStackTrace();
             return new R(false, "failed to upload", null);
         }
     }

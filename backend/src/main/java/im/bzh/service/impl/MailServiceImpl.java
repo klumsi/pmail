@@ -97,7 +97,7 @@ public class MailServiceImpl implements MailService {
         folder = formatFolderName(folder);
         String temp = Arrays.toString(ids);
         String idsStr = temp.substring(1, temp.length() - 1).replace(" ", "");
-        String cmd = "maddy imap-msgs set-flags --uid " + username + "@" + domain + " " + folder + " " + idsStr + " \\\\Seen";
+        String cmd = "maddy imap-msgs set-flags --uid " + username + "@" + domain + " " + folder + " " + idsStr + " \\Seen";
         Shell.exec(cmd, null);
         return true;
     }
@@ -107,7 +107,7 @@ public class MailServiceImpl implements MailService {
         folder = formatFolderName(folder);
         String temp = Arrays.toString(ids);
         String idsStr = temp.substring(1, temp.length() - 1).replace(" ", "");
-        String cmd = "maddy imap-msgs rem-flags --uid " + username + "@" + domain + " " + folder + " " + idsStr + " \\\\Seen";
+        String cmd = "maddy imap-msgs rem-flags --uid " + username + "@" + domain + " " + folder + " " + idsStr + " \\Seen";
         Shell.exec(cmd, null);
         return true;
     }
@@ -164,11 +164,11 @@ public class MailServiceImpl implements MailService {
         List<String> attachments = new ArrayList<>();
 
         for (AttachmentResource attachment : email.getAttachments()) {
-            attachments.add(attachment.getName());
+            attachments.add(MimeUtility.decodeText(Objects.requireNonNull(attachment.getName())));
         }
 
         for (AttachmentResource attachment : email.getEmbeddedImages()) {
-            attachments.add(attachment.getName());
+            attachments.add(MimeUtility.decodeText(Objects.requireNonNull(attachment.getName())));
         }
 
         return new Mail(id, subject, content, fromName, fromAddress, date,  attachments.toArray(new String[0]));
@@ -194,7 +194,7 @@ public class MailServiceImpl implements MailService {
                         .withHTMLText(mailDTO.getContent())
                         .buildEmail();
             } else {
-                File file = new File(uploadPath + mailDTO.getAttachments());
+                File file = new File(uploadPath + "/" + mailDTO.getAttachments());
                 email = EmailBuilder.startingBlank()
                         .from(mailDTO.getNickname(), mailDTO.getUsername() + "@" + domain)
                         .to(recipients)
@@ -219,30 +219,36 @@ public class MailServiceImpl implements MailService {
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
 
     @Override
     public boolean saveMailToDrafts(MailDTO mailDTO) throws Exception {
-        String[] address = mailDTO.getAddress();
-        List<Recipient> recipients = new ArrayList<>();
-        for (String addr : address) {
-            String nickname = addr.substring(0, addr.indexOf("@"));
-            recipients.add(new Recipient(nickname, addr, Message.RecipientType.TO));
+        try {
+            String[] address = mailDTO.getAddress();
+            List<Recipient> recipients = new ArrayList<>();
+            for (String addr : address) {
+                String nickname = addr.substring(0, addr.indexOf("@"));
+                recipients.add(new Recipient(nickname, addr, Message.RecipientType.TO));
+            }
+
+            Email email = EmailBuilder.startingBlank()
+                    .from(mailDTO.getNickname(), mailDTO.getUsername() + "@" + domain)
+                    .to(recipients)
+                    .withSubject(mailDTO.getSubject())
+                    .withHTMLText(mailDTO.getContent())
+                    .buildEmail();
+
+            String rawMail = EmailConverter.emailToEML(email);
+            String cmd = "maddy imap-msgs add " + mailDTO.getUsername() + "@" + domain + " Drafts";
+            Shell.exec(cmd, rawMail);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-
-        Email email = EmailBuilder.startingBlank()
-                .from(mailDTO.getNickname(), mailDTO.getUsername() + "@" + domain)
-                .to(recipients)
-                .withSubject(mailDTO.getSubject())
-                .withHTMLText(mailDTO.getContent())
-                .buildEmail();
-
-        String rawMail = EmailConverter.emailToEML(email);
-        String cmd = "maddy imap-msgs add " + mailDTO.getUsername() + "@" + domain + " Drafts";
-        Shell.exec(cmd, rawMail);
-        return true;
     }
 
     @Override
@@ -275,7 +281,13 @@ public class MailServiceImpl implements MailService {
         Email email = EmailConverter.emlToEmail(mailStr);
 
         for (AttachmentResource attachment : email.getAttachments()) {
-            if (fileName.equals(attachment.getName())) {
+            if (fileName.equals(MimeUtility.decodeText(Objects.requireNonNull(attachment.getName())))) {
+                return attachment.getDataSourceInputStream();
+            }
+        }
+
+        for (AttachmentResource attachment : email.getEmbeddedImages()) {
+            if (fileName.equals(MimeUtility.decodeText(Objects.requireNonNull(attachment.getName())))) {
                 return attachment.getDataSourceInputStream();
             }
         }

@@ -28,6 +28,7 @@ public class MailController {
             List<Envelope> envelopeList = mailService.getEnvelopeList(username, folder);
             return new R(true, null, envelopeList);
         } catch (Exception e) {
+            e.printStackTrace();
             return new R(false, "failed to get envelope list", null);
         }
     }
@@ -58,8 +59,12 @@ public class MailController {
     @GetMapping("/{username}/{folder}/{id}")
     public R getMail(@PathVariable String username, @PathVariable String folder, @PathVariable Long id) throws Exception {
         if (!folder.equals("drafts")) {
-            Mail mail = mailService.getMail(username, folder, id);
-            return new R(mail != null, mail != null ? null : "mail does not exist", mail);
+            try {
+                Mail mail = mailService.getMail(username, folder, id);
+                return new R(true, null, mail);
+            } catch (Exception e) {
+                return new R(false, "mail does not exist", null);
+            }
         }
         DraftVO draftVO = mailService.getDraftVO(username, folder, id);
         return new R(draftVO != null, draftVO != null ? null : "mail does not exist", draftVO);
