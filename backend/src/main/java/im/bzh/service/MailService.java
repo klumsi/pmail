@@ -6,6 +6,7 @@ import im.bzh.entity.Mail;
 import im.bzh.vo.DraftVO;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public interface MailService {
@@ -30,5 +31,5 @@ public interface MailService {
 
     DraftVO getDraftVO(String username, String folder, Long id) throws Exception;
 
-
+    InputStream getAttachmentInputStream(String username, String folder, Long id, String fileName) throws Exception;
 }

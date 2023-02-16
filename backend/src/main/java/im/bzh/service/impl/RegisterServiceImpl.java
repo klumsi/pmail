@@ -18,15 +18,21 @@ public class RegisterServiceImpl implements RegisterService {
     private UserService userService;
 
     @Override
-    public boolean register(User user) throws Exception {
-        if (userService.getUserByUsername(user.getUsername()) == null) {
-            userService.addUser(user);
-            String cmd_1 = "maddy creds create " + user.getUsername() + "@" + domain;
-            String cmd_2 = "maddy imap-acct create " + user.getUsername() + "@" + domain;
-            Shell.exec(cmd_1, user.getPassword());
-            Shell.exec(cmd_2, null);
-            return true;
+    public Integer register(User user) throws Exception {
+        try {
+            User tmpUser = userService.getUserByUsername(user.getUsername());
+            if (tmpUser == null) {
+                userService.addUser(user);
+                String cmd_1 = "maddy creds create " + user.getUsername() + "@" + domain;
+                String cmd_2 = "maddy imap-acct create " + user.getUsername() + "@" + domain;
+                Shell.exec(cmd_1, user.getPassword());
+                Shell.exec(cmd_2, null);
+                return 1;
+            } else {
+                return -1;
+            }
+        } catch (Exception e) {
+            return 0;
         }
-        return false;
     }
 }

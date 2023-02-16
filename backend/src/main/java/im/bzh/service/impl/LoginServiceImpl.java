@@ -22,23 +22,28 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String login(UserDTO userDTO) {
-        User resultUser = userService.getUserByUsername(userDTO.getUser().getUsername());
-        if (resultUser == null) {
-            return "";
-        }
+        try {
+            User resultUser = userService.getUserByUsername(userDTO.getUser().getUsername());
+            if (resultUser == null) {
+                return "";
+            }
 
-        boolean checkPassword =  resultUser.getPassword().equals(userDTO.getUser().getPassword());
-        if (!checkPassword) {
-            return "";
-        }
+            boolean checkPassword =  resultUser.getPassword().equals(userDTO.getUser().getPassword());
+            if (!checkPassword) {
+                return "";
+            }
 
-        final long EXPIRED = 1000 * 60 * 60 * 24;
-        final long EXPIRED_STAY_LOGGED_IN = 1000L * 60 * 60 * 24 * 365 * 10;
-        return Jwts.builder()
-                .setHeaderParam("alg", "HS256")
-                .setSubject(userDTO.getUser().getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + (userDTO.getStayLoggedIn() ? EXPIRED_STAY_LOGGED_IN : EXPIRED)))
-                .signWith(JWTKey)
-                .compact();
+            final long EXPIRED = 1000 * 60 * 60 * 24;
+            final long EXPIRED_STAY_LOGGED_IN = 1000L * 60 * 60 * 24 * 365 * 10;
+            return Jwts.builder()
+                    .setHeaderParam("alg", "HS256")
+                    .setSubject(userDTO.getUser().getUsername())
+                    .setExpiration(new Date(System.currentTimeMillis() + (userDTO.getStayLoggedIn() ? EXPIRED_STAY_LOGGED_IN : EXPIRED)))
+                    .signWith(JWTKey)
+                    .compact();
+
+        } catch (Exception e) {
+            return "-1";
+        }
     }
 }

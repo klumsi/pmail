@@ -21,14 +21,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.activation.FileDataSource;
-import javax.mail.Flags;
-import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -150,12 +147,8 @@ public class MailServiceImpl implements MailService {
         folder = formatFolderName(folder);
         String cmd = "maddy imap-msgs dump --uid " + username + "@" + domain + " " + folder + " " + id;
         String mailStr = Shell.exec(cmd, null);
-        javax.mail.Session session = javax.mail.Session.getDefaultInstance(new Properties());
-        MimeMessage message = new MimeMessage(session, new ByteArrayInputStream(mailStr.getBytes()));
 
-        List<String> attachments = new ArrayList<>();
-
-        Email email = EmailConverter.mimeMessageToEmail(message);
+        Email email = EmailConverter.emlToEmail(mailStr);
         String subject = email.getSubject();
         String content = email.getHTMLText();
         if (content == null) {
@@ -166,7 +159,9 @@ public class MailServiceImpl implements MailService {
         String fromAddress = "<" + email.getFromRecipient().getAddress() + ">";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-        String date = sdf.format(message.getSentDate());
+        String date = sdf.format(email.getSentDate());
+
+        List<String> attachments = new ArrayList<>();
 
         for (AttachmentResource attachment : email.getAttachments()) {
             attachments.add(attachment.getName());
@@ -270,6 +265,21 @@ public class MailServiceImpl implements MailService {
             address[i++] = recipient.getAddress();
         }
         return new DraftVO(subject, address, content);
+    }
+
+    @Override
+    public InputStream getAttachmentInputStream(String username, String folder, Long id, String fileName) throws Exception {
+        folder = formatFolderName(folder);
+        String cmd = "maddy imap-msgs dump --uid " + username + "@" + domain + " " + folder + " " + id;
+        String mailStr = Shell.exec(cmd, null);
+        Email email = EmailConverter.emlToEmail(mailStr);
+
+        for (AttachmentResource attachment : email.getAttachments()) {
+            if (fileName.equals(attachment.getName())) {
+                return attachment.getDataSourceInputStream();
+            }
+        }
+        return null;
     }
 
 
