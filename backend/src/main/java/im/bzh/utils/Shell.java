@@ -17,6 +17,7 @@ public class Shell {
         if (extra != null) {
             writer.write(extra + "\n");
             writer.flush();
+            writer.close();
         }
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();

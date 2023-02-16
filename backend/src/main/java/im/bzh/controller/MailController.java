@@ -55,7 +55,7 @@ public class MailController {
         return new R(success, success ? null : "failed to delete", null);
     }
 
-    @GetMapping("/{username}/{folder}/{uid}")
+    @GetMapping("/{username}/{folder}/{id}")
     public R getMail(@PathVariable String username, @PathVariable String folder, @PathVariable Long id) throws Exception {
         if (!folder.equals("drafts")) {
             Mail mail = mailService.getMail(username, folder, id);
@@ -65,9 +65,9 @@ public class MailController {
         return new R(draftVO != null, draftVO != null ? null : "mail does not exist", draftVO);
     }
 
-    @GetMapping("/{username}/{folder}/{uid}/{fileName}")
-    public void getAttachment(@PathVariable String username, @PathVariable String folder, @PathVariable Long uid, @PathVariable String fileName, HttpServletResponse response) throws Exception {
-        InputStream in = mailService.getAttachmentInputStream(username, folder, uid, fileName);
+    @GetMapping("/{username}/{folder}/{id}/{fileName}")
+    public void getAttachment(@PathVariable String username, @PathVariable String folder, @PathVariable Long id, @PathVariable String fileName, HttpServletResponse response) throws Exception {
+        InputStream in = mailService.getAttachmentInputStream(username, folder, id, fileName);
         IOUtils.copy(in, response.getOutputStream());
         response.flushBuffer();
     }

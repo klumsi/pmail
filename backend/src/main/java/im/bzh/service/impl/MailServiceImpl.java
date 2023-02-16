@@ -66,7 +66,7 @@ public class MailServiceImpl implements MailService {
             int pos_3 = rows[i].indexOf("<");
             int pos_4 = rows[i].indexOf(">");
             int pos_5 = rows[i].lastIndexOf(" - ");
-            long uid = Long.parseLong(rows[i].substring(pos_1, pos_2).trim());
+            long id = Long.parseLong(rows[i].substring(pos_1, pos_2).trim());
             String fromName = MimeUtility.decodeText(rows[i].substring(pos_2 + 1, pos_3).trim());
             String fromAddress = MimeUtility.decodeText(rows[i].substring(pos_3, pos_4 + 1));
             String subject = MimeUtility.decodeText(rows[i].substring(pos_5 + 3));
@@ -86,7 +86,7 @@ public class MailServiceImpl implements MailService {
             Date d = sdf1.parse(split[1] + split[2] + split[3]);
             String date = sdf2.format(d);
             long timestamp = d.getTime() / 1000;
-            Envelope e = new Envelope(uid, fromName, fromAddress, subject, status, date, timestamp);
+            Envelope e = new Envelope(id, fromName, fromAddress, subject, status, date, timestamp);
             result.add(e);
         }
         return result;
@@ -106,8 +106,8 @@ public class MailServiceImpl implements MailService {
     public boolean markMailAsUnread(String username, String folder, Integer[] ids) throws Exception {
         folder = formatFolderName(folder);
         String temp = Arrays.toString(ids);
-        String uidsStr = temp.substring(1, temp.length() - 1).replace(" ", "");
-        String cmd = "maddy imap-msgs rem-flags --uid " + username + "@" + domain + " " + folder + " " + uidsStr + " \\\\Seen";
+        String idsStr = temp.substring(1, temp.length() - 1).replace(" ", "");
+        String cmd = "maddy imap-msgs rem-flags --uid " + username + "@" + domain + " " + folder + " " + idsStr + " \\\\Seen";
         Shell.exec(cmd, null);
         return true;
     }
@@ -136,8 +136,8 @@ public class MailServiceImpl implements MailService {
         folder = formatFolderName(folder);
         destination = formatFolderName(destination);
         String temp = Arrays.toString(ids);
-        String uidsStr = temp.substring(1, temp.length() - 1).replace(" ", "");
-        String cmd = "maddy imap-msgs move --uid " + username + "@" + domain + " " + folder + " " + uidsStr + " " + destination;
+        String idsStr = temp.substring(1, temp.length() - 1).replace(" ", "");
+        String cmd = "maddy imap-msgs move --uid " + username + "@" + domain + " " + folder + " " + idsStr + " " + destination;
         Shell.exec(cmd, null);
         return true;
     }
