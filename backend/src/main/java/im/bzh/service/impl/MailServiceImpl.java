@@ -12,6 +12,7 @@ import org.simplejavamail.api.email.AttachmentResource;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.email.Recipient;
 import org.simplejavamail.api.mailer.AsyncResponse;
+import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.converter.EmailConverter;
 import org.simplejavamail.email.EmailBuilder;
@@ -211,12 +212,18 @@ public class MailServiceImpl implements MailService {
             String id = Shell.exec(cmd, rawMail).trim();
             markMailAsRead(mailDTO.getUsername(), "Sent", new Integer[]{Integer.parseInt(id)});
 
-            AsyncResponse asyncResponse = MailerBuilder
-                    .withSMTPServer(host, 465, mailDTO.getUsername() + "@" + domain, password)
+            Mailer mailer = MailerBuilder.withSMTPServer(host, 465, mailDTO.getUsername() + "@" + domain, password)
                     .withTransportStrategy(TransportStrategy.SMTPS)
-                    .buildMailer()
-                    .sendMail(email);
+                    .buildMailer();
+            AsyncResponse asyncResponse = mailer.sendMail(email, true);
+            if (asyncResponse == null) {
 
+            } else {
+                asyncResponse.onSuccess(() -> {
+
+                });
+                asyncResponse.onException(System.out::println);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
