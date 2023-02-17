@@ -97,7 +97,6 @@ export default {
                 }
                 axios.get(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder() + '/' + e.row.id).then(res => {
                     if (res.data.success) {
-                        console.log(res.data.data);
                         bus.$emit('draftForm', {
                             subject: res.data.data.subject,
                             address: res.data.data.address,
@@ -105,7 +104,7 @@ export default {
                         });
                         this.$router.push('/compose');
                     } else {
-                        this.$message.error('获取草稿失败');
+                        this.$message.warning('获取草稿失败');
                     }
                 }).catch(error => {
                     this.$message.error('服务器错误');
@@ -118,7 +117,6 @@ export default {
         },
         selectChange(value, { selectedRowData }) {
             this.selectedRowKeys = value;
-            // console.log(value, selectedRowData);
         },
         clickHandler(data) {
             if (this.selectedRowKeys.length === 0) {
@@ -139,7 +137,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('移动失败');
+                    this.$message.warning('移动失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -170,7 +168,7 @@ export default {
                     }
                     this.pagination.total = this.data.length;
                 } else {
-                    this.$message.error("获取邮件列表失败");
+                    this.$message.warning("获取邮件列表失败");
                 }
             }).catch(error => {
                 this.$message.error("服务器错误");
@@ -195,7 +193,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -215,7 +213,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -236,7 +234,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -257,7 +255,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -283,7 +281,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('删除失败');
+                    this.$message.warning('删除失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -321,7 +319,7 @@ export default {
                 }
                 this.loading = false;
             } else {
-                this.$message.error("获取邮件列表失败");
+                this.$message.warning("获取邮件列表失败");
             }
         }).catch(error => {
             this.$message.error("服务器错误");

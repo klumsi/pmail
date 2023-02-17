@@ -78,7 +78,7 @@ export default {
                             this.$router.replace('/login');
                         }, 1);
                     } else {
-                        this.$message.warning(res.data.msg);
+                        this.$message.warning('用户名已被占用');
                     }
                 }).catch(error => {
                     this.$message.error('服务器错误');

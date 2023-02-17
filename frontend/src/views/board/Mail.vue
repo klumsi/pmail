@@ -98,7 +98,7 @@ export default {
                 if (res.data.success) {
                     this.$message.success('标记成功');
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
                 
             }).catch(error => {
@@ -113,7 +113,7 @@ export default {
                 if (res.data.success) {
                     this.$message.success('标记成功');
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -134,7 +134,7 @@ export default {
                     this.$message.success('删除成功');
                     this.$router.replace('/' + this.getFolder());
                 } else {
-                    this.$message.error('删除失败');
+                    this.$message.warning('删除失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -145,7 +145,6 @@ export default {
                 this.$message.warning('选择的文件夹与当前文件夹相同');
                 return;
             }
-            console.log(data.value)
             axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MOVE',
                 ids: [this.id],
@@ -155,7 +154,7 @@ export default {
                     this.$message.success('移动成功');
                     this.$router.replace('/' + this.getFolder());
                 } else {
-                    this.$message.error('移动失败');
+                    this.$message.warning('移动失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -171,7 +170,7 @@ export default {
                     this.$message.success('标记成功');
                     this.$router.replace('/' + this.getFolder());
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -192,7 +191,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('标记失败');
+                    this.$message.warning('标记失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -205,12 +204,9 @@ export default {
     },
     created() {
         const that = this;
-        console.log(this.id)
         axios.get(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id).then(res => {
-            console.log(res)
             if (res.data.success) {
                 this.mail = res.data.data;
-                console.log(this.mail)
                 this.mail.attachments.forEach(item => {
                     const attachment = {
                         content: item,
@@ -231,7 +227,7 @@ export default {
                     ids: [this.id]
                 })
             } else {
-                this.$message.error("解析邮件失败");
+                this.$message.warning('解析邮件失败');
             }
         }).catch(error => {
             this.$message.error("服务器错误");

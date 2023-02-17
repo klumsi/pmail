@@ -85,7 +85,6 @@ export default {
 
     methods: {
         send() {
-            console.log(this.mailForm);
             if (this.check()) {
                 this.loading = true;
                 const that = this;
@@ -110,7 +109,7 @@ export default {
                         }
                         this.loading = false;
                     } else {
-                        this.$message.error('发送失败');
+                        this.$message.warning('发送失败');
                     }
                 }).catch(error => {
                     this.$message.error('服务器错误');
@@ -171,7 +170,7 @@ export default {
                         this.saveLoading = false;
                         this.$router.push('/drafts')
                     } else {
-                        this.$message.error('保存失败');
+                        this.$message.warning('保存失败');
                     }
                 }).catch(error => {
                     this.$message.error('服务器错误');

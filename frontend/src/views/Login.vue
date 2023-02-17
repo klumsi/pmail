@@ -55,7 +55,6 @@ export default {
                 },
                 stayLoggedIn: this.formData.stayLoggedIn
             }).then(res => {
-                console.log(res);
                 if (res.data.success) {
                     this.$message.success('登录成功');
                     localStorage.setItem('token', res.data.data);
@@ -63,7 +62,7 @@ export default {
                         this.$router.replace('/');
                     }, 1);
                 } else {
-                    this.$message.warning(res.data.msg);
+                    this.$message.warning('登录失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');

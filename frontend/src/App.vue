@@ -73,7 +73,7 @@ export default {
                 if (res.data.success) {
                     this.userInfo.nickname = res.data.data.nickname;
                 } else {
-                    this.$message.error('获取用户数据失败');
+                    this.$message.warning('获取用户信息失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');

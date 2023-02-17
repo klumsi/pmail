@@ -96,7 +96,6 @@ export default {
         },
         selectChange(value, { selectedRowData }) {
             this.selectedRowKeys = value;
-            // console.log(value, selectedRowData);
         },
         addContact() {
             if (this.addForm.nickname.length === 0) {
@@ -150,7 +149,7 @@ export default {
                     this.refresh();
                     this.selectedRowKeys = []
                 } else {
-                    this.$message.error('删除失败');
+                    this.$message.warning('删除失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -163,7 +162,7 @@ export default {
                     this.pagination.total = this.data.length;
                     this.loading = false;
                 } else {
-                    this.$message.error('获取联系人失败');
+                    this.$message.warning('刷新失败');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
@@ -186,7 +185,7 @@ export default {
                 this.loading = false;
                 this.allData = this.data;
             } else {
-                this.$message.error('获取联系人失败');
+                this.$message.warning('获取联系人失败');
             }
         }).catch(error => {
             this.$message.error('服务器错误');

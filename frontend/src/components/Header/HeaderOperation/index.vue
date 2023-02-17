@@ -134,12 +134,11 @@ export default {
                     nickname: this.userInfo.nickname
                 }
             }).then(res => {
-                console.log(res.data);
                 if (res.data.success) {
                     this.$message.success("修改成功");
                     this.visChangeNickname = false;
                 } else {
-                    this.$message.error("修改失败");
+                    this.$message.warning('修改失败');
                 }
             }).catch(error => {
                 this.$message.error("服务器错误");
@@ -167,7 +166,6 @@ export default {
                     },
                     newPassword: this.changePasswordForm.newPassword
                 }).then(res => {
-                    console.log(res.data);
                     if (res.data.success) {
                         this.$message.success("修改成功");
                         localStorage.removeItem('token');
@@ -176,7 +174,7 @@ export default {
                             this.$router.go(0);
                         }, 1000);
                     } else {
-                        this.$message.error("密码错误");
+                        this.$message.warning("密码错误");
                     }
                 }).catch(error => {
                     this.$message.error("服务器错误");
@@ -193,7 +191,7 @@ export default {
                         this.$router.go(0);
                     }, 1000);
                 } else {
-                    this.$message.error("删除失败");
+                    this.$message.warning("删除失败");
                 }
             }).catch(res => {
                 this.$message.error("服务器错误");
