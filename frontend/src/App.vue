@@ -116,6 +116,7 @@ export default {
 }
 
 .content {
+    min-width: 1000px;
     height: calc(100% - 12px);
     width: 100%;
     background-color: white;

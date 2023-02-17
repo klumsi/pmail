@@ -34,6 +34,7 @@ export default {
 
 <style lang="less" scoped>
 .header-container {
+    min-width: 1238px;
     box-shadow: 0px 2px 5px rgb(196, 196, 196);
 }
 
