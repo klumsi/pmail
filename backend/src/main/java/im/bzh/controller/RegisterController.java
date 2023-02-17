@@ -24,6 +24,8 @@ public class RegisterController {
             res = "account name already taken";
         } else if (success == 0){
             res = "failed to register";
+        } else if (success == 2) {
+            res = "registration not enabled";
         }
         return new R(success == 1, res, null);
     }

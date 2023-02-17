@@ -14,11 +14,17 @@ public class RegisterServiceImpl implements RegisterService {
     @Value("${mail.domain}")
     private String domain;
 
+    @Value("${mail.enable-registration}")
+    private Integer enableRegistration;
+
     @Autowired
     private UserService userService;
 
     @Override
     public Integer register(User user) throws Exception {
+        if (enableRegistration == 0) {
+            return 2;
+        }
         try {
             User tmpUser = userService.getUserByUsername(user.getUsername());
             if (tmpUser == null) {
@@ -32,7 +38,6 @@ public class RegisterServiceImpl implements RegisterService {
                 return -1;
             }
         } catch (Exception e) {
-            System.out.println(e);
             return 0;
         }
     }

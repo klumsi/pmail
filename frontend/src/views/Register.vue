@@ -78,7 +78,14 @@ export default {
                             this.$router.replace('/login');
                         }, 1);
                     } else {
-                        this.$message.warning('用户名已被占用');
+                        if (res.data.msg === 'registration not enabled') {
+                            this.$message.warning('已关闭注册')
+                        } else if (res.data.msg === 'account name already taken') {
+                            this.$message.warning('用户名已被占用');
+                        } else {
+                            this.$message.warning('注册失败');
+                        }
+                        
                     }
                 }).catch(error => {
                     this.$message.error('服务器错误');
