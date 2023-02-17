@@ -1,0 +1,13 @@
+const SERVER = '';
+const DOMAIN = '';
+
+let init = {
+    isInit: false,
+    originFolder: ''
+}
+
+export default {
+    SERVER,
+    DOMAIN,
+    init
+}
