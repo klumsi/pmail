@@ -222,7 +222,6 @@ export default {
             }).then(res => {
         
                 if (res.data.msg === 'authentication failed') {
-                    console.log('nonono')
                     this.$message.error('认证失败 请重新登录');
                     localStorage.removeItem('token');
                     setTimeout(() => {

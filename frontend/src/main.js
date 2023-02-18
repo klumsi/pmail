@@ -46,7 +46,7 @@ axios.interceptors.request.use(
         if (localStorage.getItem('token')) {
             config.headers.Authorization = localStorage.getItem('token')
         } else {
-            router.replace('/login')
+            // router.replace('/login')
         }
         return config
     },

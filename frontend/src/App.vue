@@ -112,7 +112,28 @@ export default {
         const token = localStorage.getItem('token');
         this.asideActive = asideActive;
         this.isLoggedIn = token !== null;
-        if (token) this.userInfo.username = JSON.parse(atob(token.split('.')[1]))['sub'];
+        if (token) {
+            this.userInfo.username = JSON.parse(atob(token.split('.')[1]))['sub'];
+            if (this.userInfo.nickname !== '') return;
+            axios.get(this.GLOBAL.SERVER + '/user/' + this.userInfo.username).then(res => {
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
+                } else {
+                    if (res.data.success) {
+                        this.userInfo.nickname = res.data.data.nickname;
+                    } else {
+                        this.$message.warning('获取用户信息失败');
+                    }
+                }
+
+            }).catch(error => {
+                this.$message.error('服务器错误');
+            })
+        }
     }
 }
 </script>
