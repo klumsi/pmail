@@ -370,6 +370,7 @@ export default {
 
 /deep/ .t-table__body {
     cursor: pointer;
+    -webkit-text-size-adjust: none;
 }
 
 /deep/ .t-pagination__total {
