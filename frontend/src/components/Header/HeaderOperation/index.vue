@@ -128,7 +128,7 @@ export default {
                 this.$message.warning('昵称为空');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'user/' + this.userInfo.username, {
+            axios.put(this.GLOBAL.SERVER + '/user/' + this.userInfo.username, {
                 user: {
                     username: this.userInfo.username,
                     nickname: this.userInfo.nickname
@@ -159,7 +159,7 @@ export default {
             } else if (this.changePasswordForm.newPassword !== this.changePasswordForm.confirmNewPassword) {
                 this.$message.warning("新密码与确认密码不一致");
             } else {
-                axios.put(this.GLOBAL.SERVER + 'user/' + this.userInfo.username, {
+                axios.put(this.GLOBAL.SERVER + '/user/' + this.userInfo.username, {
                     user: {
                         username: this.userInfo.username,
                         password: this.changePasswordForm.password
@@ -182,7 +182,7 @@ export default {
             }
         },
         deleteAccount() {
-            axios.delete(this.GLOBAL.SERVER + 'user/' + this.userInfo.username).then(res => {
+            axios.delete(this.GLOBAL.SERVER + '/user/' + this.userInfo.username).then(res => {
                 if (res.data.success) {
                     this.$message.success("已删除");
                     localStorage.removeItem('token');

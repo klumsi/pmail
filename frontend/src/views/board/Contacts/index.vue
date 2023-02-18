@@ -90,9 +90,11 @@ export default {
                     contactSelected.push(item.address);
                 }
             });
-            bus.$emit('contactSelected', contactSelected);
             this.selectedRowKeys = [];
-            this.$router.push('/compose')
+            this.$router.push('/compose');
+            setTimeout(() => {
+                bus.$emit('contactSelected', contactSelected);
+            }, 100);
         },
         selectChange(value, { selectedRowData }) {
             this.selectedRowKeys = value;
@@ -119,7 +121,7 @@ export default {
                 nickname: this.addForm.nickname,
                 address: this.addForm.address
             }
-            axios.post(this.GLOBAL.SERVER + 'contact' + '/' + this.getUsername(), contact).then(res => {
+            axios.post(this.GLOBAL.SERVER + '/contact/' + this.getUsername(), contact).then(res => {
                 if (res.data.success) {
                     this.$message.success('添加成功');
                     this.visAddContact = false;
@@ -139,7 +141,7 @@ export default {
                 this.$message.warning('未选择任何邮件');
                 return;
             }
-            axios.delete(this.GLOBAL.SERVER + 'contact/' + this.getUsername(), {
+            axios.delete(this.GLOBAL.SERVER + '/contact/' + this.getUsername(), {
                 data: {
                     ids: this.selectedRowKeys
                 }
@@ -156,7 +158,7 @@ export default {
             })
         },
         refresh() {
-            axios.get(this.GLOBAL.SERVER + 'contact' + '/' + this.getUsername()).then(res => {
+            axios.get(this.GLOBAL.SERVER + '/contact/' + this.getUsername()).then(res => {
                 if (res.data.success) {
                     this.data = res.data.data;
                     this.pagination.total = this.data.length;
@@ -173,12 +175,8 @@ export default {
         bus.$on('search', val => {
             this.search = val;
         });
-        if (this.GLOBAL.init.isInit === false) {
-            this.GLOBAL.init.originFolder = this.getFolder();
-            this.$router.replace('/compose');
-            return;
-        }
-        axios.get(this.GLOBAL.SERVER + 'contact' + '/' + this.getUsername()).then(res => {
+
+        axios.get(this.GLOBAL.SERVER + '/contact/' + this.getUsername()).then(res => {
             if (res.data.success) {
                 this.data = res.data.data;
                 this.pagination.total = this.data.length;

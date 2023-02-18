@@ -88,7 +88,7 @@ export default {
             if (this.check()) {
                 this.loading = true;
                 const that = this;
-                axios.post(this.GLOBAL.SERVER + 'mail', {
+                axios.post(this.GLOBAL.SERVER + '/mail', {
                     username: this.userInfo.username,
                     address: this.mailForm.address,
                     subject: this.mailForm.subject,
@@ -150,7 +150,7 @@ export default {
             if (this.check()) {
                 this.saveLoading = true;
                 const that = this;
-                axios.post(this.GLOBAL.SERVER + 'mail/save', {
+                axios.post(this.GLOBAL.SERVER + '/mail/save', {
                     username: this.userInfo.username,
                     address: this.mailForm.address,
                     subject: this.mailForm.subject,
@@ -180,25 +180,17 @@ export default {
             }
         }
     },
-    beforeCreate() {
-        if (this.GLOBAL.init.isInit === false) {
-            bus.$on('contactSelected', val => {
-                this.mailForm.address = val;
-            })
-            bus.$on('draftForm', val => {
-                this.mailForm.subject = val.subject;
-                this.mailForm.content = val.content;
-                this.mailForm.address = val.address;
-            })
-            this.GLOBAL.init.isInit = true;
-            if (this.GLOBAL.init.originFolder === '') {
-                return;
-            }
-            this.$router.replace('/' + this.GLOBAL.init.originFolder);
-            return;
-        }
-
-    },
+    created() {
+        bus.$on('contactSelected', val => {
+            this.mailForm.address = val;
+        })
+        bus.$on('draftForm', val => {
+            this.mailForm.subject = val.subject;
+            this.mailForm.content = val.content;
+            this.mailForm.address = val.address;
+        })
+        
+    }
 }
 </script>
 
@@ -244,7 +236,7 @@ export default {
 }
 
 /deep/ .ck.ck-editor {
-    height: calc(100% - 40px);
+    height: calc(100% - 36px);
 }
 
 /deep/ .ck.ck-editor__main {

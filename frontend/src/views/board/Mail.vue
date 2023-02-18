@@ -91,7 +91,7 @@ export default {
             this.$router.go(-1);
         },
         markAsRead() {
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MARK_AS_READ',
                 ids: [this.id]
             }).then(res => {
@@ -106,7 +106,7 @@ export default {
             })
         },
         markAsUnread() {
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MARK_AS_UNREAD',
                 ids: [this.id]
             }).then(res => {
@@ -123,7 +123,7 @@ export default {
             if (permanent === undefined) {
                 permanent = true;
             }
-            axios.delete(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.delete(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 data: {
                     type: "DELETE",
                     ids: [this.id],
@@ -145,7 +145,7 @@ export default {
                 this.$message.warning('选择的文件夹与当前文件夹相同');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MOVE',
                 ids: [this.id],
                 destination: data.value
@@ -161,7 +161,7 @@ export default {
             })
         },
         markAsJunk() {
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MOVE',
                 ids: [this.id],
                 destination: 'junk'
@@ -181,7 +181,7 @@ export default {
                 this.$message.warning('未选择任何邮件');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MOVE',
                 ids: this.selectedRowKeys,
                 destination: 'inbox'
@@ -198,13 +198,13 @@ export default {
             })
         },
         clickAttachmentsHandler(data) {
-            const url = this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id + '/' + data.value;
+            const url = this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id + '/' + data.value;
             window.open(url, '_blank');
         }
     },
     created() {
         const that = this;
-        axios.get(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id).then(res => {
+        axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id).then(res => {
             if (res.data.success) {
                 this.mail = res.data.data;
                 this.mail.attachments.forEach(item => {
@@ -215,14 +215,14 @@ export default {
                     
                     const temp = 'cid:' + item;
                     if (this.mail.content.search(temp) != -1) {
-                        const forward = this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id + '/' + item;
+                        const forward = this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id + '/' + item;
                         this.mail.content = this.mail.content.replace(temp, forward);
                     } else {
                         this.attachments.push(attachment);
                     }
                     
                 })
-                axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+                axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                     type: 'MARK_AS_READ',
                     ids: [this.id]
                 })

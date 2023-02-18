@@ -75,7 +75,7 @@ export default {
         this.isLoggedIn = token !== null;
         if (token) {
             this.userInfo.username = JSON.parse(atob(token.split('.')[1]))['sub'];
-            axios.get(this.GLOBAL.SERVER + 'user/' + this.userInfo.username).then(res => {
+            axios.get(this.GLOBAL.SERVER + '/user/' + this.userInfo.username).then(res => {
                 if (res.data.success) {
                     this.userInfo.nickname = res.data.data.nickname;
                 } else {

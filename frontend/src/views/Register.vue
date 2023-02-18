@@ -68,7 +68,7 @@ export default {
     methods: {
         register({ validateResult, firstError }) {
             if (validateResult === true) {
-                axios.post(this.GLOBAL.SERVER + 'register', {
+                axios.post(this.GLOBAL.SERVER + '/register', {
                     username: this.formData.username,
                     password: this.formData.password
                 }).then(res => {

@@ -95,14 +95,16 @@ export default {
                 if (e.colIndex === 0) {
                     return;
                 }
-                axios.get(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder() + '/' + e.row.id).then(res => {
+                axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + e.row.id).then(res => {
                     if (res.data.success) {
-                        bus.$emit('draftForm', {
-                            subject: res.data.data.subject,
-                            address: res.data.data.address,
-                            content: res.data.data.content
-                        });
                         this.$router.push('/compose');
+                        setTimeout(() => {
+                            bus.$emit('draftForm', {
+                                subject: res.data.data.subject,
+                                address: res.data.data.address,
+                                content: res.data.data.content
+                            });
+                        }, 100);
                     } else {
                         this.$message.warning('获取草稿失败');
                     }
@@ -127,7 +129,7 @@ export default {
                 this.$message.warning('选择的文件夹与当前文件夹相同');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MOVE',
                 ids: this.selectedRowKeys,
                 destination: data.value
@@ -147,7 +149,7 @@ export default {
             this.loading = true;
             const that = this;
             const currentPage = this.pagination.current;
-            axios.get(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
+            axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
                 if (res.data.success) {
                     if (res.data.data) {
                         this.data = res.data.data.reverse();
@@ -184,7 +186,7 @@ export default {
                 this.$message.warning('未选择任何邮件');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MARK_AS_READ',
                 ids: this.selectedRowKeys
             }).then(res => {
@@ -204,7 +206,7 @@ export default {
                 this.$message.warning('未选择任何邮件');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MARK_AS_UNREAD',
                 ids: this.selectedRowKeys
             }).then(res => {
@@ -224,7 +226,7 @@ export default {
                 this.$message.warning('未选择任何邮件');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MOVE',
                 ids: this.selectedRowKeys,
                 destination: 'junk'
@@ -245,7 +247,7 @@ export default {
                 this.$message.warning('未选择任何邮件');
                 return;
             }
-            axios.put(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 type: 'MOVE',
                 ids: this.selectedRowKeys,
                 destination: 'inbox'
@@ -269,7 +271,7 @@ export default {
             if (permanent === undefined) {
                 permanent = true;
             }
-            axios.delete(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder(), {
+            axios.delete(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
                 data: {
                     type: "DELETE",
                     ids: this.selectedRowKeys,
@@ -292,12 +294,8 @@ export default {
         bus.$on('search', val => {
             this.search = val;
         });
-        if (this.GLOBAL.init.isInit === false) {
-            this.GLOBAL.init.originFolder = this.getFolder();
-            this.$router.replace('/compose');
-            return;
-        }
-        axios.get(this.GLOBAL.SERVER + 'mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
+
+        axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
             if (res.data.success) {
                 if (res.data.data) {
                     this.data = res.data.data.reverse();
@@ -326,6 +324,7 @@ export default {
         })
     },
     created() {
+
         if (this.getFolder() === 'drafts') {
             this.columns = [
                 { colKey: 'select', type: 'multiple', width: 40 },

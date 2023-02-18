@@ -48,7 +48,7 @@ export default {
                 this.$message.warning('用户名或密码为空');
                 return;
             }
-            axios.post(this.GLOBAL.SERVER + 'login', {
+            axios.post(this.GLOBAL.SERVER + '/login', {
                 user: {
                     username: this.formData.username,
                     password: this.formData.password
@@ -62,7 +62,7 @@ export default {
                         this.$router.replace('/');
                     }, 1);
                 } else {
-                    this.$message.warning('登录失败');
+                    this.$message.warning('用户名或密码错误');
                 }
             }).catch(error => {
                 this.$message.error('服务器错误');
