@@ -3,7 +3,7 @@
         <div class="menu-bar-container">
             <div class="menu-bar">
                 <t-button variant="outline" @click="goBack">
-                    <t-icon name="chevron-left"></t-icon>
+                    <ChevronLeftIcon/>
                     返回
                 </t-button>
                 <t-button v-if="getFolder() != 'drafts'" variant="outline" @click="markAsRead">标为已读</t-button>
@@ -15,7 +15,7 @@
                 <t-dropdown v-if="getFolder() != 'drafts' && getFolder() != 'junk'" :options="options" @click="clickMoveHandler">
                     <t-button variant="outline">
                         移动到
-                        <t-icon name="chevron-down"></t-icon>
+                        <ChevronDownIcon/>
                     </t-button>
                 </t-dropdown>
                 <t-button v-if="getFolder() != 'junk' && getFolder() != 'sent' && getFolder() != 'drafts'" variant="outline" @click="markAsJunk">标记为垃圾邮件</t-button>
@@ -23,9 +23,9 @@
 
                 <t-dropdown v-if="attachments.length > 0" :options="attachments" @click="clickAttachmentsHandler" maxColumnWidth="1000">
                     <t-button variant="outline" theme="primary">
-                        <t-icon name="download"></t-icon>
+                        <DownloadIcon/>
                         获取附件
-                        <t-icon name="chevron-down"></t-icon>
+                        <ChevronDownIcon/>
                     </t-button>
                 </t-dropdown>
                     
@@ -68,6 +68,7 @@
 
 <script>
 import axios from 'axios';
+import { ChevronDownIcon, ChevronLeftIcon, DownloadIcon } from 'tdesign-icons-vue';
 
 export default {
     props: ['id'],
@@ -85,6 +86,11 @@ export default {
             visDeleteAlert: false,
             loading: true
         }
+    },
+    components: {
+        ChevronDownIcon,
+        ChevronLeftIcon,
+        DownloadIcon,
     },
     methods: {
         goBack() {

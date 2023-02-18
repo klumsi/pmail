@@ -17,14 +17,14 @@
                         </div>
                     </t-drawer>
                     <t-button variant="outline" @click="visAddContact = true">
-                        <t-icon name="add"></t-icon>
+                        <AddIcon/>
                         添加联系人
                     </t-button>
                 </template>
                 <t-popconfirm theme="warning" content="确认删除选中的联系人？该操作无法撤销" :onConfirm="delContact" v-model="visDelConfirm"
                     :visible="visDelConfirm">
                     <t-button variant="outline">
-                        <t-icon name="remove"></t-icon>
+                        <RemoveIcon/>
                         删除联系人
                     </t-button>
                 </t-popconfirm>
@@ -46,10 +46,13 @@
 import axios from 'axios';
 import bus from '@/EventBus'
 import ContentTitle from '@/components/ContentTitle'
+import { AddIcon, RemoveIcon } from 'tdesign-icons-vue';
 
 export default {
     components: {
-        ContentTitle
+        ContentTitle,
+        AddIcon,
+        RemoveIcon
     },
     data() {
         return {

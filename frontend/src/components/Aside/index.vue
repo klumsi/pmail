@@ -2,35 +2,35 @@
     <div class="aside-container">
         <t-menu :defaultValue="active">
             <t-menu-item value="/compose" to="/compose">
-                <t-icon name="edit-1"></t-icon>
+                <Edit1Icon/>
                 &nbsp;写邮件
             </t-menu-item>
             <t-menu-item value="/contacts" to="/contacts">
-                <t-icon name="usergroup"></t-icon>
+                <UsergroupIcon/>
                 &nbsp;通讯录
             </t-menu-item>
             <t-menu-item value="/inbox" to="/inbox">
-                <t-icon name="mail"></t-icon>
+                <MailIcon/>
                 &nbsp;收件箱
             </t-menu-item>
             <t-menu-item value="/sent" to="/sent">
-                <t-icon name="check-circle"></t-icon>
+                <CheckCircleIcon/>
                 &nbsp;已发送
             </t-menu-item>
             <t-menu-item value="/drafts" to="/drafts">
-                <t-icon name="root-list"></t-icon>
+                <RootListIcon/>
                 &nbsp;草稿箱
             </t-menu-item>
             <t-menu-item value="/archive" to="/archive">
-                <t-icon name="control-platform"></t-icon>
+                <ControlPlatformIcon/>
                 &nbsp;归档
             </t-menu-item>
             <t-menu-item value="/trash" to="/trash">
-                <t-icon name="delete"></t-icon>
+                <DeleteIcon/>
                 &nbsp;已删除
             </t-menu-item>
             <t-menu-item value="/junk" to="/junk">
-                <t-icon name="filter-clear"></t-icon>
+                <FilterClearIcon/>
                 &nbsp;垃圾邮件
             </t-menu-item>
         </t-menu>
@@ -38,8 +38,20 @@
 </template>
 
 <script>
+import { Edit1Icon, UsergroupIcon, MailIcon, CheckCircleIcon, RootListIcon, ControlPlatformIcon, DeleteIcon, FilterClearIcon } from 'tdesign-icons-vue';
+
 export default {
     props: ['active'],
+    components: {
+        Edit1Icon,
+        UsergroupIcon,
+        MailIcon,
+        CheckCircleIcon,
+        RootListIcon,
+        ControlPlatformIcon,
+        DeleteIcon,
+        FilterClearIcon,
+    }
 }
 </script>
 

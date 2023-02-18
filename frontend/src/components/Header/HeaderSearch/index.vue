@@ -2,7 +2,7 @@
     <div class="header-search">
         <t-input placeholder="搜索" @change="submit" v-model.trim="q">
             <template #prefix-icon>
-                <t-icon name="search" size="18" />
+                <SearchIcon size="18"/>
             </template>
         </t-input>
     </div>
@@ -10,26 +10,27 @@
 
 <script>
 import bus from '@/EventBus'
+import { SearchIcon } from 'tdesign-icons-vue';
 
 export default {
-    name: 'Search',
+    name: "Search",
     data() {
         return {
-            q: '',
+            q: "",
             refreshSearch: false
-        }
+        };
     },
     methods: {
         submit() {
-            bus.$emit('search', this.q);
+            bus.$emit("search", this.q);
         },
     },
     beforeCreate() {
-        bus.$on('search', val => {
+        bus.$on("search", val => {
             this.q = val;
-        })
-    }
-
+        });
+    },
+    components: { SearchIcon }
 }
 </script>
 

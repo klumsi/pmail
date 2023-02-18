@@ -5,23 +5,23 @@
                 <t-button variant="text">
                     <t-avatar>{{ userInfo.username.substr(0, 2) }}</t-avatar>
                     &nbsp; {{ userInfo.username + '@' + this.GLOBAL.DOMAIN }}
-                    <t-icon name="chevron-down" size="20"></t-icon>
+                    <ChevronDownIcon size="20"/>
                 </t-button>
                 <t-dropdown-menu>
                     <t-dropdown-item :value="1">
-                        <t-icon name="edit"></t-icon>
+                        <EditIcon/>
                         &nbsp;修改昵称
                     </t-dropdown-item>
                     <t-dropdown-item :value="2">
-                        <t-icon name="lock-on"></t-icon>
+                        <LockOnIcon/>
                         &nbsp;修改密码
                     </t-dropdown-item>
                     <t-dropdown-item :value="3">
-                        <t-icon name="setting"></t-icon>
+                        <SettingIcon/>
                         &nbsp;帐号管理
                     </t-dropdown-item>
                     <t-dropdown-item :value="4">
-                        <t-icon name="poweroff"></t-icon>
+                        <PoweroffIcon/>
                         &nbsp;退出登录
                     </t-dropdown-item>
                 </t-dropdown-menu>
@@ -78,6 +78,7 @@
 
 <script>
 import axios from 'axios'
+import { ChevronDownIcon, EditIcon, LockOnIcon, SettingIcon, PoweroffIcon } from 'tdesign-icons-vue';
 
 export default {
     name: 'Dropdown',
@@ -94,6 +95,13 @@ export default {
                 confirmNewPassword: ''
             }
         }
+    },
+    components: {
+        ChevronDownIcon, 
+        EditIcon, 
+        LockOnIcon, 
+        SettingIcon, 
+        PoweroffIcon
     },
     methods: {
         clickHandler(data) {

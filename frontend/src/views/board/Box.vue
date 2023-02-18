@@ -4,7 +4,7 @@
         <div class="menu-bar-container">
             <div class="menu-bar">
                 <t-button variant="outline" @click="refresh()">
-                    <t-icon name="refresh"></t-icon>
+                    <RefreshIcon/>
                     刷新
                 </t-button>
                 <t-button v-if="getFolder() != 'drafts'" variant="outline" @click="markAsRead">标为已读</t-button>
@@ -16,7 +16,7 @@
                 <t-dropdown v-if="getFolder() != 'drafts' && getFolder() != 'junk'" :options="options" @click="clickHandler">
                     <t-button variant="outline">
                         移动到
-                        <t-icon name="chevron-down"></t-icon>
+                        <ChevronDownIcon/>
                     </t-button>
                 </t-dropdown>
                 <t-button v-if="getFolder() != 'junk' && getFolder() != 'sent' && getFolder() != 'drafts'" variant="outline" @click="markAsJunk">标记为垃圾邮件</t-button>
@@ -37,11 +37,14 @@
 import axios from 'axios';
 import bus from '@/EventBus';
 import ContentTitle from '@/components/ContentTitle';
+import { RefreshIcon, ChevronDownIcon } from 'tdesign-icons-vue';
 
 export default {
     components: {
-        ContentTitle
-    },
+    ContentTitle,
+    RefreshIcon,
+    ChevronDownIcon,
+},
     props: ['title'],
     data() {
         return {
