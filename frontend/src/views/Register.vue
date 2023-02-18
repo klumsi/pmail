@@ -73,21 +73,30 @@ export default {
                     username: this.formData.username,
                     password: this.formData.password
                 }).then(res => {
-                    if (res.data.success) {
-                        this.$message.success('注册成功');
+                    if (res.data.msg === 'authentication failed') {
+                        this.$message.error('认证失败 请重新登录');
+                        localStorage.removeItem('token');
                         setTimeout(() => {
                             this.$router.replace('/login');
                         }, 1);
                     } else {
-                        if (res.data.msg === 'registration not enabled') {
-                            this.$message.warning('已关闭注册')
-                        } else if (res.data.msg === 'account name already taken') {
-                            this.$message.warning('用户名已被占用');
+                        if (res.data.success) {
+                            this.$message.success('注册成功');
+                            setTimeout(() => {
+                                this.$router.replace('/login');
+                            }, 1);
                         } else {
-                            this.$message.warning('注册失败');
+                            if (res.data.msg === 'registration not enabled') {
+                                this.$message.warning('已关闭注册')
+                            } else if (res.data.msg === 'account name already taken') {
+                                this.$message.warning('用户名已被占用');
+                            } else {
+                                this.$message.warning('注册失败');
+                            }
+                            
                         }
-                        
                     }
+                    
                 }).catch(error => {
                     this.$message.error('服务器错误');
                 }).finally(() => {

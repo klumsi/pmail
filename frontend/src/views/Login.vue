@@ -55,15 +55,24 @@ export default {
                 },
                 stayLoggedIn: this.formData.stayLoggedIn
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('登录成功');
-                    localStorage.setItem('token', res.data.data);
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
                     setTimeout(() => {
-                        this.$router.replace('/');
+                        this.$router.replace('/login');
                     }, 1);
                 } else {
-                    this.$message.warning('用户名或密码错误');
+                    if (res.data.success) {
+                        this.$message.success('登录成功');
+                        localStorage.setItem('token', res.data.data);
+                        setTimeout(() => {
+                            this.$router.replace('/');
+                        }, 1);
+                    } else {
+                        this.$message.warning('用户名或密码错误');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })

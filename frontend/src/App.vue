@@ -76,11 +76,20 @@ export default {
         if (token) {
             this.userInfo.username = JSON.parse(atob(token.split('.')[1]))['sub'];
             axios.get(this.GLOBAL.SERVER + '/user/' + this.userInfo.username).then(res => {
-                if (res.data.success) {
-                    this.userInfo.nickname = res.data.data.nickname;
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('获取用户信息失败');
+                    if (res.data.success) {
+                        this.userInfo.nickname = res.data.data.nickname;
+                    } else {
+                        this.$message.warning('获取用户信息失败');
+                    }
                 }
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })

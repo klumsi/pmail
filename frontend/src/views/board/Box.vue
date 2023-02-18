@@ -99,18 +99,27 @@ export default {
                     return;
                 }
                 axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + e.row.id).then(res => {
-                    if (res.data.success) {
-                        this.$router.push('/compose');
+                    if (res.data.msg === 'authentication failed') {
+                        this.$message.error('认证失败 请重新登录');
+                        localStorage.removeItem('token');
                         setTimeout(() => {
-                            bus.$emit('draftForm', {
-                                subject: res.data.data.subject,
-                                address: res.data.data.address,
-                                content: res.data.data.content
-                            });
-                        }, 100);
+                            this.$router.replace('/login');
+                        }, 1);
                     } else {
-                        this.$message.warning('获取草稿失败');
+                        if (res.data.success) {
+                            this.$router.push('/compose');
+                            setTimeout(() => {
+                                bus.$emit('draftForm', {
+                                    subject: res.data.data.subject,
+                                    address: res.data.data.address,
+                                    content: res.data.data.content
+                                });
+                            }, 1);
+                        } else {
+                            this.$message.warning('获取草稿失败');
+                        }
                     }
+                    
                 }).catch(error => {
                     this.$message.error('服务器错误');
                 })
@@ -137,13 +146,22 @@ export default {
                 ids: this.selectedRowKeys,
                 destination: data.value
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('移动成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('移动失败');
+                    if (res.data.success) {
+                        this.$message.success('移动成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('移动失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -153,28 +171,37 @@ export default {
             const that = this;
             const currentPage = this.pagination.current;
             axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
-                if (res.data.success) {
-                    if (res.data.data) {
-                        this.data = res.data.data.reverse();
-                        this.data.sort((a, b) => {
-                            if (a.status != b.status) {
-                                return a.status - b.status;
-                            } else {
-                                return b.timestamp - a.timestamp;
-                            }
-                        })
-                        this.data.forEach(d => {
-                            d.fromName += ' ' + d.fromAddress;
-                        });
-                        this.pagination.total = res.data.data.length;
-                        this.pagination.defaultCurrent = currentPage;
-                    } else {
-                        this.data = [];
-                    }
-                    this.pagination.total = this.data.length;
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning("获取邮件列表失败");
+                    if (res.data.success) {
+                        if (res.data.data) {
+                            this.data = res.data.data.reverse();
+                            this.data.sort((a, b) => {
+                                if (a.status != b.status) {
+                                    return a.status - b.status;
+                                } else {
+                                    return b.timestamp - a.timestamp;
+                                }
+                            })
+                            this.data.forEach(d => {
+                                d.fromName += ' ' + d.fromAddress;
+                            });
+                            this.pagination.total = res.data.data.length;
+                            this.pagination.defaultCurrent = currentPage;
+                        } else {
+                            this.data = [];
+                        }
+                        this.pagination.total = this.data.length;
+                    } else {
+                        this.$message.warning("获取邮件列表失败");
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error("服务器错误");
             }).finally(() => {
@@ -193,13 +220,24 @@ export default {
                 type: 'MARK_AS_READ',
                 ids: this.selectedRowKeys
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+        
+                if (res.data.msg === 'authentication failed') {
+                    console.log('nonono')
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -213,13 +251,22 @@ export default {
                 type: 'MARK_AS_UNREAD',
                 ids: this.selectedRowKeys
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -234,13 +281,22 @@ export default {
                 ids: this.selectedRowKeys,
                 destination: 'junk'
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -255,13 +311,22 @@ export default {
                 ids: this.selectedRowKeys,
                 destination: 'inbox'
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -281,13 +346,22 @@ export default {
                     deletePermanently: permanent
                 }
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('删除成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('删除失败');
+                    if (res.data.success) {
+                        this.$message.success('删除成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('删除失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -299,29 +373,38 @@ export default {
         });
 
         axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
-            if (res.data.success) {
-                if (res.data.data) {
-                    this.data = res.data.data.reverse();
-                    this.data.sort((a, b) => {
-                        if (a.status != b.status) {
-                            return a.status - b.status;
-                        } else {
-                            return b.timestamp - a.timestamp;
-                        }
-                    })
-                    this.data.forEach(d => {
-                        d.fromName += ' ' + d.fromAddress;
-                    });
-                    this.pagination.total = res.data.data.length;
-                    this.allData = this.data;
-                } else {
-                    this.data = [];
-                    this.allData = this.data;
-                }
-                this.loading = false;
+            if (res.data.msg === 'authentication failed') {
+                this.$message.error('认证失败 请重新登录');
+                localStorage.removeItem('token');
+                setTimeout(() => {
+                    this.$router.replace('/login');
+                }, 1);
             } else {
-                this.$message.warning("获取邮件列表失败");
+                if (res.data.success) {
+                    if (res.data.data) {
+                        this.data = res.data.data.reverse();
+                        this.data.sort((a, b) => {
+                            if (a.status != b.status) {
+                                return a.status - b.status;
+                            } else {
+                                return b.timestamp - a.timestamp;
+                            }
+                        })
+                        this.data.forEach(d => {
+                            d.fromName += ' ' + d.fromAddress;
+                        });
+                        this.pagination.total = res.data.data.length;
+                        this.allData = this.data;
+                    } else {
+                        this.data = [];
+                        this.allData = this.data;
+                    }
+                    this.loading = false;
+                } else {
+                    this.$message.warning("获取邮件列表失败");
+                }
             }
+            
         }).catch(error => {
             this.$message.error("服务器错误");
         })

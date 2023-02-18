@@ -101,10 +101,18 @@ export default {
                 type: 'MARK_AS_READ',
                 ids: [this.id]
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
                 
             }).catch(error => {
@@ -116,11 +124,20 @@ export default {
                 type: 'MARK_AS_UNREAD',
                 ids: [this.id]
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -136,12 +153,21 @@ export default {
                     deletePermanently: permanent
                 }
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('删除成功');
-                    this.$router.replace('/' + this.getFolder());
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('删除失败');
+                    if (res.data.success) {
+                        this.$message.success('删除成功');
+                        this.$router.replace('/' + this.getFolder());
+                    } else {
+                        this.$message.warning('删除失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -156,12 +182,21 @@ export default {
                 ids: [this.id],
                 destination: data.value
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('移动成功');
-                    this.$router.replace('/' + this.getFolder());
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('移动失败');
+                    if (res.data.success) {
+                        this.$message.success('移动成功');
+                        this.$router.replace('/' + this.getFolder());
+                    } else {
+                        this.$message.warning('移动失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -172,12 +207,21 @@ export default {
                 ids: [this.id],
                 destination: 'junk'
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
-                    this.$router.replace('/' + this.getFolder());
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                        this.$router.replace('/' + this.getFolder());
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -192,13 +236,22 @@ export default {
                 ids: this.selectedRowKeys,
                 destination: 'inbox'
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('标记成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('标记失败');
+                    if (res.data.success) {
+                        this.$message.success('标记成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('标记失败');
+                    }
                 }
+ 
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -211,30 +264,49 @@ export default {
     created() {
         const that = this;
         axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id).then(res => {
-            if (res.data.success) {
-                this.mail = res.data.data;
-                this.mail.attachments.forEach(item => {
-                    const attachment = {
-                        content: item,
-                        value: item
-                    };
-                    
-                    const temp = 'cid:' + item;
-                    if (this.mail.content.search(temp) != -1) {
-                        const forward = this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id + '/' + item;
-                        this.mail.content = this.mail.content.replace(temp, forward);
-                    } else {
-                        this.attachments.push(attachment);
-                    }
-                    
-                })
-                axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
-                    type: 'MARK_AS_READ',
-                    ids: [this.id]
-                })
+            if (res.data.msg === 'authentication failed') {
+                this.$message.error('认证失败 请重新登录');
+                localStorage.removeItem('token');
+                setTimeout(() => {
+                    this.$router.replace('/login');
+                }, 1);
             } else {
-                this.$message.warning('解析邮件失败');
+                if (res.data.success) {
+                    this.mail = res.data.data;
+                    this.mail.attachments.forEach(item => {
+                        const attachment = {
+                            content: item,
+                            value: item
+                        };
+                        
+                        const temp = 'cid:' + item;
+                        if (this.mail.content.search(temp) != -1) {
+                            const forward = this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder() + '/' + this.id + '/' + item;
+                            this.mail.content = this.mail.content.replace(temp, forward);
+                        } else {
+                            this.attachments.push(attachment);
+                        }
+                        
+                    })
+                    axios.put(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder(), {
+                        type: 'MARK_AS_READ',
+                        ids: [this.id]
+                    }).then(res => {
+                            if (res.data.msg === 'authentication failed') {
+                                this.$message.error('认证失败 请重新登录');
+                                localStorage.removeItem('token');
+                                setTimeout(() => {
+                                    this.$router.replace('/login');
+                                }, 1);
+                            } else {
+                                
+                            }
+                    })
+                } else {
+                    this.$message.warning('解析邮件失败');
+                }
             }
+            
         }).catch(error => {
             this.$message.error("服务器错误");
         }).finally(() => {

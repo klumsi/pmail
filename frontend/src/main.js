@@ -6,6 +6,7 @@ import TDesign from 'tdesign-vue';
 import 'tdesign-vue/es/style/index.css';
 import CKEditor from '@ckeditor/ckeditor5-vue2'
 import axios from 'axios';
+import { MessagePlugin } from 'tdesign-vue';
 
 Vue.use(TDesign);
 Vue.use(CKEditor)
@@ -40,14 +41,28 @@ router.beforeEach((to, from, next) => {
     next()
 })
 
-axios.interceptors.request.use(config => {
-    if (localStorage.getItem('token')) {
-        config.headers.Authorization = localStorage.getItem('token')
-    } else {
-        router.replace('/login')
+axios.interceptors.request.use(
+    config => {
+        if (localStorage.getItem('token')) {
+            config.headers.Authorization = localStorage.getItem('token')
+        } else {
+            router.replace('/login')
+        }
+        return config
+    },
+    error => {
+        return Promise.reject(error)
     }
-    return config
-})
+)
+
+axios.interceptors.response.use(
+    response => {
+        return response
+    },
+    error => {
+        return Promise.reject(error)
+    }
+)
 
 new Vue({
     router,

@@ -8,7 +8,7 @@
             <t-input :label="'主 题：' + ' ㅤ'" placeholder="输入主题" v-model="mailForm.subject" clearable></t-input>
         </div>
         <div class="tool-bar">
-            <t-upload :action="GLOBAL.SERVER + 'upload'" v-model="mailForm.attachments" theme="file-input"
+            <t-upload :action="GLOBAL.SERVER + '/upload'" v-model="mailForm.attachments" theme="file-input"
                 placeholder="未选择文件" @success="uploadSuccess"></t-upload>
 
         </div>
@@ -97,20 +97,29 @@ export default {
                     attachments: this.mailForm.attachments.length === 0 ? null : this.mailForm.attachments[0].response.data,
                     content: this.mailForm.content
                 }).then(res => {
-                    if (res.data.success) {
-                        this.$message.success('已发送');
-                        this.mailForm = {
-                            username: this.userInfo.username,
-                            address: [],
-                            subject: '',
-                            nickname: this.userInfo.nickname,
-                            attachments: [],
-                            content: ''
-                        }
-                        this.loading = false;
+                    if (res.data.msg === 'authentication failed') {
+                        this.$message.error('认证失败 请重新登录');
+                        localStorage.removeItem('token');
+                        setTimeout(() => {
+                            this.$router.replace('/login');
+                        }, 1);
                     } else {
-                        this.$message.warning('发送失败');
+                        if (res.data.success) {
+                            this.$message.success('已发送');
+                            this.mailForm = {
+                                username: this.userInfo.username,
+                                address: [],
+                                subject: '',
+                                nickname: this.userInfo.nickname,
+                                attachments: [],
+                                content: ''
+                            }
+                            this.loading = false;
+                        } else {
+                            this.$message.warning('发送失败');
+                        }
                     }
+                    
                 }).catch(error => {
                     this.$message.error('服务器错误');
                 }).finally(() => {
@@ -157,21 +166,30 @@ export default {
                     nickname: this.userInfo.nickname,
                     content: this.mailForm.content
                 }).then(res => {
-                    if (res.data.success) {
-                        this.$message.success('已保存');
-                        this.mailForm = {
-                            username: this.userInfo.username,
-                            address: [],
-                            subject: '',
-                            nickname: this.userInfo.nickname,
-                            attachments: [],
-                            content: ''
-                        }
-                        this.saveLoading = false;
-                        this.$router.push('/drafts')
+                    if (res.data.msg === 'authentication failed') {
+                        this.$message.error('认证失败 请重新登录');
+                        localStorage.removeItem('token');
+                        setTimeout(() => {
+                            this.$router.replace('/login');
+                        }, 1);
                     } else {
-                        this.$message.warning('保存失败');
+                        if (res.data.success) {
+                            this.$message.success('已保存');
+                            this.mailForm = {
+                                username: this.userInfo.username,
+                                address: [],
+                                subject: '',
+                                nickname: this.userInfo.nickname,
+                                attachments: [],
+                                content: ''
+                            }
+                            this.saveLoading = false;
+                            this.$router.push('/drafts')
+                        } else {
+                            this.$message.warning('保存失败');
+                        }
                     }
+                    
                 }).catch(error => {
                     this.$message.error('服务器错误');
                 }).finally(() => {

@@ -97,7 +97,7 @@ export default {
             this.$router.push('/compose');
             setTimeout(() => {
                 bus.$emit('contactSelected', contactSelected);
-            }, 100);
+            }, 1);
         },
         selectChange(value, { selectedRowData }) {
             this.selectedRowKeys = value;
@@ -125,15 +125,24 @@ export default {
                 address: this.addForm.address
             }
             axios.post(this.GLOBAL.SERVER + '/contact/' + this.getUsername(), contact).then(res => {
-                if (res.data.success) {
-                    this.$message.success('添加成功');
-                    this.visAddContact = false;
-                    this.refresh();
-                    this.selectedRowKeys = [];
-                    this.addForm = [];
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('联系人已存在');
+                    if (res.data.success) {
+                        this.$message.success('添加成功');
+                        this.visAddContact = false;
+                        this.refresh();
+                        this.selectedRowKeys = [];
+                        this.addForm = [];
+                    } else {
+                        this.$message.warning('联系人已存在');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -149,26 +158,44 @@ export default {
                     ids: this.selectedRowKeys
                 }
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success('删除成功');
-                    this.refresh();
-                    this.selectedRowKeys = []
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('删除失败');
+                    if (res.data.success) {
+                        this.$message.success('删除成功');
+                        this.refresh();
+                        this.selectedRowKeys = []
+                    } else {
+                        this.$message.warning('删除失败');
+                    }
                 }
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
         },
         refresh() {
             axios.get(this.GLOBAL.SERVER + '/contact/' + this.getUsername()).then(res => {
-                if (res.data.success) {
-                    this.data = res.data.data;
-                    this.pagination.total = this.data.length;
-                    this.loading = false;
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('刷新失败');
+                    if (res.data.success) {
+                        this.data = res.data.data;
+                        this.pagination.total = this.data.length;
+                        this.loading = false;
+                    } else {
+                        this.$message.warning('刷新失败');
+                    }
                 }
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -180,14 +207,23 @@ export default {
         });
 
         axios.get(this.GLOBAL.SERVER + '/contact/' + this.getUsername()).then(res => {
-            if (res.data.success) {
-                this.data = res.data.data;
-                this.pagination.total = this.data.length;
-                this.loading = false;
-                this.allData = this.data;
+            if (res.data.msg === 'authentication failed') {
+                this.$message.error('认证失败 请重新登录');
+                localStorage.removeItem('token');
+                setTimeout(() => {
+                    this.$router.replace('/login');
+                }, 1);
             } else {
-                this.$message.warning('获取联系人失败');
+                if (res.data.success) {
+                    this.data = res.data.data;
+                    this.pagination.total = this.data.length;
+                    this.loading = false;
+                    this.allData = this.data;
+                } else {
+                    this.$message.warning('获取联系人失败');
+                }
             }
+
         }).catch(error => {
             this.$message.error('服务器错误');
         })

@@ -142,12 +142,21 @@ export default {
                     nickname: this.userInfo.nickname
                 }
             }).then(res => {
-                if (res.data.success) {
-                    this.$message.success("修改成功");
-                    this.visChangeNickname = false;
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning('修改失败');
+                    if (res.data.success) {
+                        this.$message.success("修改成功");
+                        this.visChangeNickname = false;
+                    } else {
+                        this.$message.warning('修改失败');
+                    }
                 }
+                
             }).catch(error => {
                 this.$message.error("服务器错误");
             })
@@ -174,16 +183,25 @@ export default {
                     },
                     newPassword: this.changePasswordForm.newPassword
                 }).then(res => {
-                    if (res.data.success) {
-                        this.$message.success("修改成功");
+                    if (res.data.msg === 'authentication failed') {
+                        this.$message.error('认证失败 请重新登录');
                         localStorage.removeItem('token');
                         setTimeout(() => {
-                            this.visChangePassword = false;
-                            this.$router.go(0);
-                        }, 1000);
+                            this.$router.replace('/login');
+                        }, 1);
                     } else {
-                        this.$message.warning("密码错误");
+                        if (res.data.success) {
+                            this.$message.success("修改成功");
+                            localStorage.removeItem('token');
+                            setTimeout(() => {
+                                this.visChangePassword = false;
+                                this.$router.go(0);
+                            }, 1000);
+                        } else {
+                            this.$message.warning("密码错误");
+                        }
                     }
+                    
                 }).catch(error => {
                     this.$message.error("服务器错误");
                 })
@@ -191,16 +209,25 @@ export default {
         },
         deleteAccount() {
             axios.delete(this.GLOBAL.SERVER + '/user/' + this.userInfo.username).then(res => {
-                if (res.data.success) {
-                    this.$message.success("已删除");
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
                     localStorage.removeItem('token');
                     setTimeout(() => {
-                        this.visChangePassword = false;
-                        this.$router.go(0);
-                    }, 1000);
+                        this.$router.replace('/login');
+                    }, 1);
                 } else {
-                    this.$message.warning("删除失败");
+                    if (res.data.success) {
+                        this.$message.success("已删除");
+                        localStorage.removeItem('token');
+                        setTimeout(() => {
+                            this.visChangePassword = false;
+                            this.$router.go(0);
+                        }, 1000);
+                    } else {
+                        this.$message.warning("删除失败");
+                    }
                 }
+                
             }).catch(res => {
                 this.$message.error("服务器错误");
             })
