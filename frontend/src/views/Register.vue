@@ -107,6 +107,8 @@ export default {
 
 <style lang="less" scoped>
 .register-container {
+    margin-left: 10px;
+    margin-right: 10px;
     background-color: white;
     height: 350px;
     width: 480px;

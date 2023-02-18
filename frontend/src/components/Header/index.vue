@@ -1,5 +1,5 @@
 <template>
-    <div class="header-container">
+    <div class="header-container" :style="headStyle">
         <t-head-menu theme="light">
             <template #logo>
                 <img width="230" src="@/assets/logo.png" />
@@ -22,7 +22,7 @@ import HeaderOperation from '@/components/Header/HeaderOperation'
 
 export default {
     name: 'Header',
-    props: ['isLoggedIn', 'userInfo', 'visSearch'],
+    props: ['isLoggedIn', 'userInfo', 'visSearch', 'headStyle'],
     components: {
         HeaderSearch,
         HeaderOperation
@@ -34,7 +34,6 @@ export default {
 
 <style lang="less" scoped>
 .header-container {
-    min-width: 1238px;
     box-shadow: 0px 2px 5px rgb(196, 196, 196);
 }
 

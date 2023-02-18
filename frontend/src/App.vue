@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <Header :isLoggedIn="isLoggedIn" :userInfo="userInfo" :visSearch="visSearch"></Header>
+        <Header :isLoggedIn="isLoggedIn" :userInfo="userInfo" :visSearch="visSearch" :headStyle="headStyle"></Header>
         <div v-if="isLoggedIn" class="board">
             <div class="aside">
                 <Aside :active="asideActive"></Aside>
@@ -35,7 +35,8 @@ export default {
                 username: '',
                 nickname: ''
             },
-            visSearch: true
+            visSearch: true,
+            headStyle: 'min-width: 1238px;'
         }
     },
     components: {
@@ -56,6 +57,11 @@ export default {
         document.querySelector('body').setAttribute('style', 'background-color:#f0f0f0; margin: 0px; height: 100%; font-family: -apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;')
     },
     created() {
+        if (this.getFolder() === 'login' || this.getFolder() == 'register') {
+            this.headStyle = ''
+        } else {
+            this.headStyle = 'min-width: 1238px;'
+        }
         bus.$emit('search', '');
         if (this.getFolder() === 'compose') {
             this.visSearch = false;
@@ -81,6 +87,11 @@ export default {
         }
     },
     updated() {
+        if (this.getFolder() === 'login' || this.getFolder() == 'register') {
+            this.headStyle = ''
+        } else {
+            this.headStyle = 'min-width: 1238px;'
+        }
         bus.$emit('search', '');
         if (this.getFolder() === 'compose') {
             this.visSearch = false;
