@@ -5,6 +5,7 @@ import router from './router'
 import TDesign from 'tdesign-vue';
 import 'tdesign-vue/es/style/index.css';
 import CKEditor from '@ckeditor/ckeditor5-vue2'
+import axios from 'axios';
 
 Vue.use(TDesign);
 Vue.use(CKEditor)
@@ -37,6 +38,15 @@ router.beforeEach((to, from, next) => {
         document.title = to.meta.title;
     }
     next()
+})
+
+axios.interceptors.request.use(config => {
+    if (localStorage.getItem('token')) {
+        config.headers.Authorization = localStorage.getItem('token')
+    } else {
+        router.replace('/login')
+    }
+    return config
 })
 
 new Vue({

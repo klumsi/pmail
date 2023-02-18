@@ -68,6 +68,7 @@ export default {
     methods: {
         register({ validateResult, firstError }) {
             if (validateResult === true) {
+                localStorage.setItem('token', 'register')
                 axios.post(this.GLOBAL.SERVER + '/register', {
                     username: this.formData.username,
                     password: this.formData.password
@@ -89,6 +90,8 @@ export default {
                     }
                 }).catch(error => {
                     this.$message.error('服务器错误');
+                }).finally(() => {
+                    localStorage.removeItem('token');
                 })
             } else {
                 this.$message.warning(firstError);
