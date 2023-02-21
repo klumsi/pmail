@@ -453,10 +453,25 @@ export default {
 
 }
 
+/deep/ .t-table td {
+    padding: 11px 24px 9px 24px;
+}
+
+/deep/ .t-table th {
+    padding: 11px 24px 9px 24px;
+}
+
+/deep/ .t-table td.t-table__cell-check {
+    padding: 0;
+}
+
+/deep/ .t-table th.t-table__cell-check {
+    padding: 0;
+}
+
 /deep/ .t-table__body {
     cursor: pointer;
     -webkit-text-size-adjust: none;
-    padding: 11px 24px 9px 24px
 }
 
 /deep/ .t-pagination__total {
