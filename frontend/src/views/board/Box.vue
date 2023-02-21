@@ -41,10 +41,10 @@ import { RefreshIcon, ChevronDownIcon } from 'tdesign-icons-vue';
 
 export default {
     components: {
-    ContentTitle,
-    RefreshIcon,
-    ChevronDownIcon,
-},
+        ContentTitle,
+        RefreshIcon,
+        ChevronDownIcon,
+    },
     props: ['title'],
     data() {
         return {
@@ -56,11 +56,11 @@ export default {
                     cell: (h, { row }) => {
                         if (row.status === 0) {
                             return (
-                                <svg t="1670745502797" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2754" width="16" height="16"><path d="M508.4 575.1l400.8-383.4c-1.6-0.1-3.1-0.2-4.7-0.2H121.2c-4.3 0-8.4 0.5-12.4 1.4l399.6 382.2z" fill="#333333" p-id="2755"></path><path d="M958.6 233.2l-0.9 0.6-413.3 395.4c-10 9.5-23 14.3-36 14.3s-26.1-4.8-36-14.3l-406.7-389c-0.3 2.4-0.5 4.8-0.5 7.3v486c0 54 44 98 98 98h699.3c54 0 98-44 98-98v-486c-0.3-15.1-1.9-14.3-1.9-14.3z" fill="#333333" p-id="2756"></path></svg>
+                                <svg style="margin-top:5px" t="1676970469352" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4021" width="16" height="16"><path d="M508.4 575.1l400.8-383.4c-1.6-0.1-3.1-0.2-4.7-0.2H121.2c-4.3 0-8.4 0.5-12.4 1.4l399.6 382.2z" fill="#efb336" p-id="4022"></path><path d="M958.6 233.2l-0.9 0.6-413.3 395.4c-10 9.5-23 14.3-36 14.3s-26.1-4.8-36-14.3l-406.7-389c-0.3 2.4-0.5 4.8-0.5 7.3v486c0 54 44 98 98 98h699.3c54 0 98-44 98-98v-486c-0.3-15.1-1.9-14.3-1.9-14.3z" fill="#efb336" p-id="4023"></path></svg>
                             );
                         } else if (row.status === 1) {
                             return (
-                                <svg t="1670746383467" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5076" width="16" height="16"><path d="M170.666667 341.333333l341.333333 213.333334 341.333333-213.333334-341.333333-213.333333-341.333333 213.333333m768 0v426.666667a85.333333 85.333333 0 0 1-85.333334 85.333333H170.666667a85.333333 85.333333 0 0 1-85.333334-85.333333V341.333333c0-31.146667 16.64-58.026667 41.386667-72.96L512 27.306667l385.28 241.066666c24.746667 14.933333 41.386667 41.813333 41.386667 72.96z" fill="#333333" p-id="5077"></path></svg>
+                                <svg style="margin-top:5px" t="1676970547431" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5257" width="16" height="16"><path d="M947.8 439.8L541.6 757.2c-16.3 12.8-42.8 12.8-59.1 0L76.2 439.8c-16.3-12.8-16.3-33.4 0-46.2L482.4 76.3c16.3-12.8 42.8-12.8 59.1 0l406.2 317.3c16.4 12.8 16.4 33.5 0.1 46.2z" fill="#bfbfbf" p-id="5258"></path><path d="M581 807.6c-19.1 14.9-43.6 23.1-69 23.1s-49.9-8.2-69-23.1L64 511.5V827c0 55.2 44.8 100 100 100h696c55.2 0 100-44.8 100-100V511.5L581 807.6z" fill="#707070" p-id="5259"></path></svg>
                             );
                         }
                     }
@@ -456,6 +456,7 @@ export default {
 /deep/ .t-table__body {
     cursor: pointer;
     -webkit-text-size-adjust: none;
+    padding: 11px 24px 9px 24px
 }
 
 /deep/ .t-pagination__total {
@@ -479,4 +480,5 @@ export default {
     }
 
 }
+
 </style>
