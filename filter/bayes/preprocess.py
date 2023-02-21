@@ -8,8 +8,8 @@ from nltk.tokenize import RegexpTokenizer
 EN_DATASET_PATH = './dataset/raw/trec06p'
 ZH_DATASET_PATH = './dataset/raw/trec06c'
 
-SPAM = 10
-HAM = 10
+SPAM = 20000
+HAM = 20000
 
 
 def get_body(raw_text):

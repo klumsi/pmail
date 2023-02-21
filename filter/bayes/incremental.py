@@ -39,18 +39,22 @@ corpus = []
 labels = []
 
 for file in ham_files:
-    with open(STAGE_HAM_DATASET_PATH + '/' + file, 'r') as raw_file:
+    path = STAGE_HAM_DATASET_PATH + '/' + file
+    with open(path, 'r') as raw_file:
         raw_text = raw_file.read()
         body = get_body(raw_text)
         corpus.append(process(body))
         labels.append(0)
+    os.remove(path)
 
 for file in spam_files:
-    with open(STAGE_SPAM_DATASET_PATH + '/' + file, 'r') as raw_file:
+    path = STAGE_SPAM_DATASET_PATH + '/' + file
+    with open(path, 'r') as raw_file:
         raw_text = raw_file.read()
         body = get_body(raw_text)
         corpus.append(process(body))
         labels.append(1)
+    os.remove(path)
 
 data = pd.DataFrame({"text": corpus, "spam": labels})
 old_data = pd.read_csv("./data/data.csv")[["text", "spam"]]

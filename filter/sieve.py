@@ -65,7 +65,7 @@ def getBody(owner, msgId):
 
 
 def isSpam(body):
-    return True if test(body)[0] == 1 else False
+    return test(body)[0] == 1
 
 
 def moveToJunk(owner, msgId):
