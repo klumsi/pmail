@@ -409,23 +409,46 @@ export default {
         })
     },
     created() {
-
         if (this.getFolder() === 'drafts') {
             this.columns = [
                 { colKey: 'select', type: 'multiple', width: 40 },
+                {
+                    colKey: 'status',
+                    width: 40,
+                    cell: (h, { row }) => {
+                        return (
+                                <svg style="margin-top:5px" t="1676990724432" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="21694" width="16" height="16"><path d="M418.4 518.8L402.5 583c-5 20.2 16.3 41.7 36.6 37l65.1-15.2c4.1-0.9 7.6-2.9 10.5-5.7L953 160.8c9.6-9.6 8.2-26.7-3.3-38.1l-49.2-49.2c-11.4-11.4-28.5-12.9-38.1-3.3L424 508.6c-2.7 2.8-4.7 6.3-5.6 10.2z" fill="#707070" p-id="21695"></path><path d="M560 644.3a85.01 85.01 0 0 1-41.2 22.8l-65.1 15.2c-6.6 1.5-13.5 2.3-20.3 2.3-28.7 0-56.8-14-75.1-37.4-18.1-23.1-24.6-52.1-17.8-79.6l15.8-64.2c3.8-15.2 11.6-29.1 22.5-40.1L743.9 98.2H185.6c-48.4 0-87.6 39.2-87.6 87.6v654.9c0 48.4 39.2 87.6 87.6 87.6h654.9c48.4 0 87.6-39.2 87.6-87.6V276.3L560 644.3z" fill="#bfbfbf" p-id="21696"></path></svg>                        
+                            )
+                    }
+                        
+                },
+                { colKey: 'fromName', title: '收件人', width: 160, ellipsis: true },
                 { colKey: 'subject', title: '主题', width: 420,  ellipsis: true },
                 { colKey: 'date', title: '时间', width: 170 },
             ]
         } else if (this.getFolder() === 'sent') {
             this.columns = [
                 { colKey: 'select', type: 'multiple', width: 40 },
+                {
+                    colKey: 'status',
+                    width: 40,
+                    cell: (h, { row }) => {
+                        if (row.status === 0) {
+                            return (
+                                <svg style="margin-top:5px" t="1676970469352" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4021" width="16" height="16"><path d="M508.4 575.1l400.8-383.4c-1.6-0.1-3.1-0.2-4.7-0.2H121.2c-4.3 0-8.4 0.5-12.4 1.4l399.6 382.2z" fill="#efb336" p-id="4022"></path><path d="M958.6 233.2l-0.9 0.6-413.3 395.4c-10 9.5-23 14.3-36 14.3s-26.1-4.8-36-14.3l-406.7-389c-0.3 2.4-0.5 4.8-0.5 7.3v486c0 54 44 98 98 98h699.3c54 0 98-44 98-98v-486c-0.3-15.1-1.9-14.3-1.9-14.3z" fill="#efb336" p-id="4023"></path></svg>
+                            );
+                        } else if (row.status === 1) {
+                            return (
+                                <svg style="margin-top:5px" t="1676970547431" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5257" width="16" height="16"><path d="M947.8 439.8L541.6 757.2c-16.3 12.8-42.8 12.8-59.1 0L76.2 439.8c-16.3-12.8-16.3-33.4 0-46.2L482.4 76.3c16.3-12.8 42.8-12.8 59.1 0l406.2 317.3c16.4 12.8 16.4 33.5 0.1 46.2z" fill="#bfbfbf" p-id="5258"></path><path d="M581 807.6c-19.1 14.9-43.6 23.1-69 23.1s-49.9-8.2-69-23.1L64 511.5V827c0 55.2 44.8 100 100 100h696c55.2 0 100-44.8 100-100V511.5L581 807.6z" fill="#707070" p-id="5259"></path></svg>
+                            );
+                        }
+                    }
+                },
+                { colKey: 'fromName', title: '收件人', width: 160, ellipsis: true },
                 { colKey: 'subject', title: '主题', width: 420,  ellipsis: true },
                 { colKey: 'date', title: '时间', width: 170 },
             ]
         }
-        // setInterval(() => {
-        //     this.refresh();
-        // }, 60000);
     },
     watch: {
         search: {
