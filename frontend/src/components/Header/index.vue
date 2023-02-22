@@ -2,7 +2,7 @@
     <div class="header-container" :style="headStyle">
         <t-head-menu theme="light">
             <template #logo>
-                <img width="230" src="@/assets/logo.png" />
+                <img width="230" src="@/assets/logo.png" @click="go"/>
             </template>
 
             <HeaderSearch v-if="isLoggedIn && visSearch"></HeaderSearch>
@@ -28,6 +28,9 @@ export default {
         HeaderOperation
     },
     methods: {
+        go() {
+            this.$router.push("/inbox");
+        }
     }
 }
 </script>
@@ -39,5 +42,9 @@ export default {
 
 /deep/ .t-menu__logo:not(:empty) {
     margin-right: 0px !important;
+}
+
+/deep/ .t-menu__logo {
+    cursor: pointer;
 }
 </style>
