@@ -51,6 +51,27 @@ public class MailController {
         }
     }
 
+    @GetMapping("/{username}/full/{folder}")
+    public R getFullEnvelopeList(@PathVariable String username, @PathVariable String folder, @RequestHeader String Authorization) throws Exception {
+        Jws<Claims> claimsJws = null;
+        try {
+            claimsJws = Jwts.parserBuilder().setSigningKey(JWTKey).build().parseClaimsJws(Authorization);
+            if (!claimsJws.getBody().getSubject().equals(username)) {
+                return new R(false, "authentication failed", null);
+            }
+        } catch (JwtException e) {
+            return new R(false, "authentication failed", null);
+        }
+
+        try {
+            List<Envelope> envelopeList = mailService.getFullEnvelopeList(username, folder);
+            return new R(true, null, envelopeList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new R(false, "failed to get envelope list", null);
+        }
+    }
+
     @PutMapping("/{username}/{folder}")
     public R updateMail(@PathVariable String username, @PathVariable String folder, @RequestBody MailTransferDTO mailTransferDTO, @RequestHeader String Authorization) throws Exception {
         Jws<Claims> claimsJws = null;

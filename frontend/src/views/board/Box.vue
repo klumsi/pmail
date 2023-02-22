@@ -4,22 +4,25 @@
         <div class="menu-bar-container">
             <div class="menu-bar">
                 <t-button variant="outline" @click="refresh()">
-                    <RefreshIcon/>
+                    <RefreshIcon />
                     刷新
                 </t-button>
                 <t-button v-if="getFolder() != 'drafts'" variant="outline" @click="markAsRead">标为已读</t-button>
                 <t-button v-if="getFolder() != 'drafts'" variant="outline" @click="markAsUnread">标为未读</t-button>
-                <t-button v-if="getFolder() != 'trash' && getFolder() != 'junk' && getFolder() != 'drafts'" variant="outline" @click="deleteMail($event, false)">删除</t-button>
+                <t-button v-if="getFolder() != 'trash' && getFolder() != 'junk' && getFolder() != 'drafts'"
+                    variant="outline" @click="deleteMail($event, false)">删除</t-button>
                 <t-popconfirm theme="warning" content="是否删除所选邮件？该操作无法撤销" v-model="visDeleteAlert" :onConfirm="deleteMail">
                     <t-button variant="outline">彻底删除</t-button>
                 </t-popconfirm>
-                <t-dropdown v-if="getFolder() != 'drafts' && getFolder() != 'junk'" :options="options" @click="clickHandler">
+                <t-dropdown v-if="getFolder() != 'drafts' && getFolder() != 'junk'" :options="options"
+                    @click="clickHandler">
                     <t-button variant="outline">
                         移动到
-                        <ChevronDownIcon/>
+                        <ChevronDownIcon />
                     </t-button>
                 </t-dropdown>
-                <t-button v-if="getFolder() != 'junk' && getFolder() != 'sent' && getFolder() != 'drafts'" variant="outline" @click="markAsJunk">标记为垃圾邮件</t-button>
+                <t-button v-if="getFolder() != 'junk' && getFolder() != 'sent' && getFolder() != 'drafts'" variant="outline"
+                    @click="markAsJunk">标记为垃圾邮件</t-button>
                 <t-button v-if="getFolder() == 'junk'" variant="outline" @click="markAsUnjunk">标记为非垃圾邮件</t-button>
             </div>
         </div>
@@ -65,8 +68,8 @@ export default {
                         }
                     }
                 },
-                { colKey: 'fromName', title: '发件人', width: 160, ellipsis: true },
-                { colKey: 'subject', title: '主题', width: 420,  ellipsis: true },
+                { colKey: 'name', title: '发件人', width: 160, ellipsis: true },
+                { colKey: 'subject', title: '主题', width: 420, ellipsis: true },
                 { colKey: 'date', title: '时间', width: 170 },
             ],
             data: [],
@@ -119,7 +122,7 @@ export default {
                             this.$message.warning('获取草稿失败');
                         }
                     }
-                    
+
                 }).catch(error => {
                     this.$message.error('服务器错误');
                 })
@@ -161,7 +164,7 @@ export default {
                         this.$message.warning('移动失败');
                     }
                 }
-                
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -201,7 +204,7 @@ export default {
                         this.$message.warning("获取邮件列表失败");
                     }
                 }
-                
+
             }).catch(error => {
                 this.$message.error("服务器错误");
             }).finally(() => {
@@ -220,7 +223,7 @@ export default {
                 type: 'MARK_AS_READ',
                 ids: this.selectedRowKeys
             }).then(res => {
-        
+
                 if (res.data.msg === 'authentication failed') {
                     this.$message.error('认证失败 请重新登录');
                     localStorage.removeItem('token');
@@ -295,7 +298,7 @@ export default {
                         this.$message.warning('标记失败');
                     }
                 }
-                
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -325,7 +328,7 @@ export default {
                         this.$message.warning('标记失败');
                     }
                 }
-                
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
@@ -360,55 +363,19 @@ export default {
                         this.$message.warning('删除失败');
                     }
                 }
-                
+
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
         }
     },
     beforeCreate() {
+
+    },
+    created() {
         bus.$on('search', val => {
             this.search = val;
         });
-
-        axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
-            if (res.data.msg === 'authentication failed') {
-                this.$message.error('认证失败 请重新登录');
-                localStorage.removeItem('token');
-                setTimeout(() => {
-                    this.$router.replace('/login');
-                }, 1);
-            } else {
-                if (res.data.success) {
-                    if (res.data.data) {
-                        this.data = res.data.data.reverse();
-                        this.data.sort((a, b) => {
-                            if (a.status != b.status) {
-                                return a.status - b.status;
-                            } else {
-                                return b.timestamp - a.timestamp;
-                            }
-                        })
-                        this.data.forEach(d => {
-                            d.fromName += ' ' + d.fromAddress;
-                        });
-                        this.pagination.total = res.data.data.length;
-                        this.allData = this.data;
-                    } else {
-                        this.data = [];
-                        this.allData = this.data;
-                    }
-                    this.loading = false;
-                } else {
-                    this.$message.warning("获取邮件列表失败");
-                }
-            }
-            
-        }).catch(error => {
-            this.$message.error("服务器错误");
-        })
-    },
-    created() {
         if (this.getFolder() === 'drafts') {
             this.columns = [
                 { colKey: 'select', type: 'multiple', width: 40 },
@@ -417,15 +384,53 @@ export default {
                     width: 40,
                     cell: (h, { row }) => {
                         return (
-                                <svg style="margin-top:5px" t="1676990724432" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="21694" width="16" height="16"><path d="M418.4 518.8L402.5 583c-5 20.2 16.3 41.7 36.6 37l65.1-15.2c4.1-0.9 7.6-2.9 10.5-5.7L953 160.8c9.6-9.6 8.2-26.7-3.3-38.1l-49.2-49.2c-11.4-11.4-28.5-12.9-38.1-3.3L424 508.6c-2.7 2.8-4.7 6.3-5.6 10.2z" fill="#707070" p-id="21695"></path><path d="M560 644.3a85.01 85.01 0 0 1-41.2 22.8l-65.1 15.2c-6.6 1.5-13.5 2.3-20.3 2.3-28.7 0-56.8-14-75.1-37.4-18.1-23.1-24.6-52.1-17.8-79.6l15.8-64.2c3.8-15.2 11.6-29.1 22.5-40.1L743.9 98.2H185.6c-48.4 0-87.6 39.2-87.6 87.6v654.9c0 48.4 39.2 87.6 87.6 87.6h654.9c48.4 0 87.6-39.2 87.6-87.6V276.3L560 644.3z" fill="#bfbfbf" p-id="21696"></path></svg>                        
-                            )
+                            <svg style="margin-top:5px" t="1676990724432" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="21694" width="16" height="16"><path d="M418.4 518.8L402.5 583c-5 20.2 16.3 41.7 36.6 37l65.1-15.2c4.1-0.9 7.6-2.9 10.5-5.7L953 160.8c9.6-9.6 8.2-26.7-3.3-38.1l-49.2-49.2c-11.4-11.4-28.5-12.9-38.1-3.3L424 508.6c-2.7 2.8-4.7 6.3-5.6 10.2z" fill="#707070" p-id="21695"></path><path d="M560 644.3a85.01 85.01 0 0 1-41.2 22.8l-65.1 15.2c-6.6 1.5-13.5 2.3-20.3 2.3-28.7 0-56.8-14-75.1-37.4-18.1-23.1-24.6-52.1-17.8-79.6l15.8-64.2c3.8-15.2 11.6-29.1 22.5-40.1L743.9 98.2H185.6c-48.4 0-87.6 39.2-87.6 87.6v654.9c0 48.4 39.2 87.6 87.6 87.6h654.9c48.4 0 87.6-39.2 87.6-87.6V276.3L560 644.3z" fill="#bfbfbf" p-id="21696"></path></svg>
+                        )
                     }
-                        
+
                 },
-                { colKey: 'fromName', title: '收件人', width: 160, ellipsis: true },
-                { colKey: 'subject', title: '主题', width: 420,  ellipsis: true },
+                { colKey: 'name', title: '收件人', width: 160, ellipsis: true },
+                { colKey: 'subject', title: '主题', width: 420, ellipsis: true },
                 { colKey: 'date', title: '时间', width: 170 },
-            ]
+            ];
+            axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/full/' + this.getFolder()).then(res => {
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
+                } else {
+                    if (res.data.success) {
+                        if (res.data.data) {
+                            this.data = res.data.data.reverse();
+                            this.data.sort((a, b) => {
+                                if (a.status != b.status) {
+                                    return a.status - b.status;
+                                } else {
+                                    return b.timestamp - a.timestamp;
+                                }
+                            })
+                            this.data.forEach(d => {
+                                d.name = d.recipients.map((e, i) => {
+                                    return e.name;
+                                }).join(", ")
+                            });
+                            this.pagination.total = res.data.data.length;
+                            this.allData = this.data;
+                        } else {
+                            this.data = [];
+                            this.allData = this.data;
+                        }
+                        this.loading = false;
+                    } else {
+                        this.$message.warning("获取邮件列表失败");
+                    }
+                }
+
+            }).catch(error => {
+                this.$message.error("服务器错误");
+            })
         } else if (this.getFolder() === 'sent') {
             this.columns = [
                 { colKey: 'select', type: 'multiple', width: 40 },
@@ -444,10 +449,89 @@ export default {
                         }
                     }
                 },
-                { colKey: 'fromName', title: '收件人', width: 160, ellipsis: true },
-                { colKey: 'subject', title: '主题', width: 420,  ellipsis: true },
+                { colKey: 'name', title: '收件人', width: 160, ellipsis: true },
+                { colKey: 'subject', title: '主题', width: 420, ellipsis: true },
                 { colKey: 'date', title: '时间', width: 170 },
-            ]
+            ];
+            axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/full/' + this.getFolder()).then(res => {
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
+                } else {
+                    if (res.data.success) {
+                        if (res.data.data) {
+                            this.data = res.data.data.reverse();
+                            this.data.sort((a, b) => {
+                                if (a.status != b.status) {
+                                    return a.status - b.status;
+                                } else {
+                                    return b.timestamp - a.timestamp;
+                                }
+                            })
+                            this.data.forEach(d => {
+                                d.name = d.recipients.map((e, i) => {
+                                    return e.name;
+                                }).join(", ")
+                            });
+                            this.pagination.total = res.data.data.length;
+                            this.allData = this.data;
+                        } else {
+                            this.data = [];
+                            this.allData = this.data;
+                        }
+                        this.loading = false;
+                    } else {
+                        this.$message.warning("获取邮件列表失败");
+                    }
+                }
+
+            }).catch(error => {
+                this.$message.error("服务器错误");
+            })
+        } else {
+            axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
+                if (res.data.msg === 'authentication failed') {
+                    this.$message.error('认证失败 请重新登录');
+                    localStorage.removeItem('token');
+                    setTimeout(() => {
+                        this.$router.replace('/login');
+                    }, 1);
+                } else {
+                    if (res.data.success) {
+                        if (res.data.data) {
+                            this.data = res.data.data.reverse();
+                            this.data.sort((a, b) => {
+                                if (a.status != b.status) {
+                                    return a.status - b.status;
+                                } else {
+                                    return b.timestamp - a.timestamp;
+                                }
+                            })
+                            this.data.forEach(d => {
+                                if (d.fromName.length === 0) {
+                                    d.name = d.fromAddress.substring(1, d.fromAddress.indexOf('@'));
+                                } else {
+                                    d.name = d.fromName;
+                                }
+                            });
+                            this.pagination.total = res.data.data.length;
+                            this.allData = this.data;
+                        } else {
+                            this.data = [];
+                            this.allData = this.data;
+                        }
+                        this.loading = false;
+                    } else {
+                        this.$message.warning("获取邮件列表失败");
+                    }
+                }
+
+            }).catch(error => {
+                this.$message.error("服务器错误");
+            })
         }
     },
     watch: {
@@ -518,5 +602,4 @@ export default {
     }
 
 }
-
 </style>

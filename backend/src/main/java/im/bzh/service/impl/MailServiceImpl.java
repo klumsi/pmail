@@ -94,6 +94,61 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
+    public List<Envelope> getFullEnvelopeList(String username, String folder) throws Exception {
+        folder = formatFolderName(folder);
+        List<Envelope> result = new ArrayList<>();
+        String envelopes = Shell.exec("maddy imap-msgs list -f " + username + "@" + domain + " " + folder, null);
+        if ("".equals(envelopes)) {
+            return null;
+        }
+        String[] rows = envelopes.split("\n");
+        for (int i = 0; i < rows.length; i += 13) {
+            long id = Long.parseLong(rows[i + 1].substring(4).trim());
+            String subject = MimeUtility.decodeText(rows[i + 11].substring(8).trim());
+            String flags = rows[i + 3].substring(rows[i + 3].indexOf('[') + 1, rows[i + 3].indexOf(']'));
+
+            int status = 0;
+            for (String s : flags.split(" ")) {
+                if ("\\Seen".equals(s)) {
+                    status = 1;
+                    break;
+                }
+            }
+
+            String[] dateSplit = rows[i + 10].split(" ");
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-ddHH:mm:ssZ");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            Date d = sdf1.parse(dateSplit[2] + dateSplit[3] + dateSplit[4]);
+            String date = sdf2.format(d);
+            long timestamp = d.getTime() / 1000;
+
+            String[] toSplit = rows[i + 8].substring(3).trim().split(",");
+            List<im.bzh.entity.Recipient> recipients = new ArrayList<>();
+
+            for (String s : toSplit) {
+                String[] split = s.trim().split(" ");
+                String name = null;
+                String address = null;
+                if (split.length == 1) {
+                    name = split[0].split("@")[0].trim().substring(1);
+                    address = split[0].trim();
+                } else {
+                    name = split[0].trim();
+                    address = split[1].trim();
+                }
+                name = MimeUtility.decodeText(name);
+                address = MimeUtility.decodeText(address);
+                recipients.add(new im.bzh.entity.Recipient(name, address));
+            }
+
+            Envelope e = new Envelope(id, null, null, subject, status, date, timestamp, recipients);
+
+            result.add(e);
+        }
+        return result;
+    }
+
+    @Override
     public boolean markMailAsRead(String username, String folder, Integer[] ids) throws Exception {
         folder = formatFolderName(folder);
         String temp = Arrays.toString(ids);

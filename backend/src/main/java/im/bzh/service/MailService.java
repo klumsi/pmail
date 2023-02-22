@@ -15,6 +15,8 @@ public interface MailService {
 
     List<Envelope> getEnvelopeList(String username, String folder) throws Exception;
 
+    List<Envelope> getFullEnvelopeList(String username, String folder) throws Exception;
+
     boolean markMailAsRead(String username, String folder, Integer[] ids) throws Exception;
 
     boolean markMailAsUnread(String username, String folder, Integer[] ids) throws Exception;
