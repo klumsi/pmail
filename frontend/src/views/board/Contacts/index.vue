@@ -17,14 +17,12 @@
                         </div>
                     </t-drawer>
                     <t-button variant="outline" @click="visAddContact = true">
-                        <AddIcon/>
                         添加联系人
                     </t-button>
                 </template>
                 <t-popconfirm theme="warning" content="确认删除选中的联系人？该操作无法撤销" :onConfirm="delContact" v-model="visDelConfirm"
                     :visible="visDelConfirm">
                     <t-button variant="outline">
-                        <RemoveIcon/>
                         删除联系人
                     </t-button>
                 </t-popconfirm>

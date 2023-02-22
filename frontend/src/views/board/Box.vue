@@ -8,22 +8,24 @@
                     刷新
                 </t-button>
                 <t-button v-if="getFolder() != 'drafts'" variant="outline" @click="markAsRead">标为已读</t-button>
-                <t-button v-if="getFolder() != 'drafts'" variant="outline" @click="markAsUnread">标为未读</t-button>
                 <t-button v-if="getFolder() != 'trash' && getFolder() != 'junk' && getFolder() != 'drafts'"
                     variant="outline" @click="deleteMail($event, false)">删除</t-button>
                 <t-popconfirm theme="warning" content="是否删除所选邮件？该操作无法撤销" v-model="visDeleteAlert" :onConfirm="deleteMail">
                     <t-button variant="outline">彻底删除</t-button>
                 </t-popconfirm>
-                <t-dropdown v-if="getFolder() != 'drafts' && getFolder() != 'junk'" :options="options"
-                    @click="clickHandler">
+                <t-dropdown v-if="getFolder() != 'drafts'" :options="mark_options" @click="markHandler">
                     <t-button variant="outline">
-                        移动到
+                        标记为
                         <ChevronDownIcon />
                     </t-button>
                 </t-dropdown>
-                <t-button v-if="getFolder() != 'junk' && getFolder() != 'sent' && getFolder() != 'drafts'" variant="outline"
-                    @click="markAsJunk">标记为垃圾邮件</t-button>
-                <t-button v-if="getFolder() == 'junk'" variant="outline" @click="markAsUnjunk">标记为非垃圾邮件</t-button>
+                <t-dropdown v-if="getFolder() != 'drafts' && getFolder() != 'junk'" :options="options"
+                    @click="clickHandler">
+                    <t-button variant="outline">
+                        移至
+                        <ChevronDownIcon />
+                    </t-button>
+                </t-dropdown>
             </div>
         </div>
         <t-table class="tdesign-demo__select-single" row-key="id" :columns="columns" :data="data" table-layout="fixed"
@@ -90,6 +92,10 @@ export default {
                 { content: '收件箱', value: 'inbox' },
                 { content: '已发送', value: 'sent' },
                 { content: '归档', value: 'archive' },
+            ],
+            mark_options: [
+                { content: '未读邮件', value: 'unread' },
+                { content: '垃圾邮件', value: 'junk' },
             ],
             visDeleteAlert: false,
             search: ''
@@ -168,6 +174,15 @@ export default {
             }).catch(error => {
                 this.$message.error('服务器错误');
             })
+        },
+        markHandler(data) {
+            if (data.value === 'unread') {
+                this.markAsUnread();
+            } else if (data.value === 'junk') {
+                this.markAsJunk();
+            } else if (data.value === 'unjunk') {
+                this.markAsUnjunk();
+            }
         },
         refresh() {
             this.loading = true;
@@ -419,6 +434,14 @@ export default {
         bus.$on('search', val => {
             this.search = val;
         });
+
+        if (this.getFolder() === 'junk') {
+            this.mark_options = [
+                { content: '未读邮件', value: 'unread' },
+                { content: '非垃圾邮件', value: 'unjunk' },
+            ]
+        }
+        
         if (this.getFolder() === 'drafts') {
             this.columns = [
                 { colKey: 'select', type: 'multiple', width: 40 },
