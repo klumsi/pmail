@@ -2,10 +2,14 @@
     <div class="compose-container">
         <ContentTitle title="新邮件"></ContentTitle>
         <div class="mail-info-item">
-            <t-tag-input label="收件人：" placeholder="输入地址" v-model="mailForm.address" clearable></t-tag-input>
+            <t-input-adornment prepend="发件人名称">
+                <t-tag-input placeholder="输入地址" v-model="mailForm.address" clearable></t-tag-input>
+            </t-input-adornment>
         </div>
         <div class="mail-info-item">
-            <t-input :label="'主 题：' + ' ㅤ'" placeholder="输入主题" v-model="mailForm.subject" clearable></t-input>
+            <t-input-adornment prepend="主题">
+                <t-input placeholder="输入主题" v-model="mailForm.subject" clearable></t-input>
+            </t-input-adornment>
         </div>
         <div class="tool-bar">
             <t-upload :action="GLOBAL.SERVER + '/upload'" v-model="mailForm.attachments" theme="file-input"
