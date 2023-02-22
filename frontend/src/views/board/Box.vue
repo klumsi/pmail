@@ -173,43 +173,89 @@ export default {
             this.loading = true;
             const that = this;
             const currentPage = this.pagination.current;
-            axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
-                if (res.data.msg === 'authentication failed') {
-                    this.$message.error('认证失败 请重新登录');
-                    localStorage.removeItem('token');
-                    setTimeout(() => {
-                        this.$router.replace('/login');
-                    }, 1);
-                } else {
-                    if (res.data.success) {
-                        if (res.data.data) {
-                            this.data = res.data.data.reverse();
-                            this.data.sort((a, b) => {
-                                if (a.status != b.status) {
-                                    return a.status - b.status;
-                                } else {
-                                    return b.timestamp - a.timestamp;
-                                }
-                            })
-                            this.data.forEach(d => {
-                                d.fromName += ' ' + d.fromAddress;
-                            });
-                            this.pagination.total = res.data.data.length;
-                            this.pagination.defaultCurrent = currentPage;
-                        } else {
-                            this.data = [];
-                        }
-                        this.pagination.total = this.data.length;
-                    } else {
-                        this.$message.warning("获取邮件列表失败");
-                    }
-                }
 
-            }).catch(error => {
-                this.$message.error("服务器错误");
-            }).finally(() => {
-                that.loading = false;
-            })
+            if (this.getFolder() == 'sent' || this.getFolder() == 'drafts') {
+                axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/full/' + this.getFolder()).then(res => {
+                    if (res.data.msg === 'authentication failed') {
+                        this.$message.error('认证失败 请重新登录');
+                        localStorage.removeItem('token');
+                        setTimeout(() => {
+                            this.$router.replace('/login');
+                        }, 1);
+                    } else {
+                        if (res.data.success) {
+                            if (res.data.data) {
+                                this.data = res.data.data.reverse();
+                                this.data.sort((a, b) => {
+                                    if (a.status != b.status) {
+                                        return a.status - b.status;
+                                    } else {
+                                        return b.timestamp - a.timestamp;
+                                    }
+                                })
+                                this.data.forEach(d => {
+                                    d.name = d.recipients.map((e, i) => {
+                                        return e.name;
+                                    }).join(", ")
+                                });
+                                this.pagination.total = res.data.data.length;
+                                this.allData = this.data;
+                            } else {
+                                this.data = [];
+                                this.allData = this.data;
+                            }
+                            this.loading = false;
+                        } else {
+                            this.$message.warning("获取邮件列表失败");
+                        }
+                    }
+
+                }).catch(error => {
+                    this.$message.error("服务器错误");
+                })
+            } else {
+                axios.get(this.GLOBAL.SERVER + '/mail/' + this.getUsername() + '/' + this.getFolder()).then(res => {
+                    if (res.data.msg === 'authentication failed') {
+                        this.$message.error('认证失败 请重新登录');
+                        localStorage.removeItem('token');
+                        setTimeout(() => {
+                            this.$router.replace('/login');
+                        }, 1);
+                    } else {
+                        if (res.data.success) {
+                            if (res.data.data) {
+                                this.data = res.data.data.reverse();
+                                this.data.sort((a, b) => {
+                                    if (a.status != b.status) {
+                                        return a.status - b.status;
+                                    } else {
+                                        return b.timestamp - a.timestamp;
+                                    }
+                                })
+                                this.data.forEach(d => {
+                                    if (d.fromName.length === 0) {
+                                        d.name = d.fromAddress.substring(1, d.fromAddress.indexOf('@'));
+                                    } else {
+                                        d.name = d.fromName;
+                                    }
+                                });
+                                this.pagination.total = res.data.data.length;
+                                this.allData = this.data;
+                            } else {
+                                this.data = [];
+                                this.allData = this.data;
+                            }
+                            this.loading = false;
+                        } else {
+                            this.$message.warning("获取邮件列表失败");
+                        }
+                    }
+
+                }).catch(error => {
+                    this.$message.error("服务器错误");
+                })
+            }
+
         },
         onPageChange(pageInfo) {
             this.pagination.current = pageInfo.current;
@@ -534,7 +580,7 @@ export default {
     watch: {
         search: {
             handler(newVal, oldVal) {
-                this.data = this.allData.filter(data => data.subject.includes(newVal) || data.fromName.includes(newVal) || data.fromAddress.includes(newVal));
+                this.data = this.allData.filter(data => data.name.includes(newVal) || data.subject.includes(newVal));
                 this.pagination.total = this.data.length;
             },
         }
