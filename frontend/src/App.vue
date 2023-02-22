@@ -77,7 +77,6 @@ export default {
             this.userInfo.username = JSON.parse(atob(token.split('.')[1]))['sub'];
             axios.get(this.GLOBAL.SERVER + '/user/' + this.userInfo.username).then(res => {
                 if (res.data.msg === 'authentication failed') {
-                    this.$message.error('认证失败 请重新登录');
                     localStorage.removeItem('token');
                     setTimeout(() => {
                         this.$router.replace('/login');

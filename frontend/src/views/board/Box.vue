@@ -135,6 +135,7 @@ export default {
                 return;
             }
             if (e.colIndex > 0) {
+                this.refresh();
                 this.$router.push('/' + this.getFolder() + '/' + e.row.id);
             }
         },
@@ -606,6 +607,20 @@ export default {
                 this.data = this.allData.filter(data => data.name.includes(newVal) || data.subject.includes(newVal));
                 this.pagination.total = this.data.length;
             },
+        },
+        allData: {
+            handler(newVal, oldVal) {
+                let sum = 0;
+                newVal.forEach(msg => {
+                    if (msg.status === 0) {
+                        sum++;
+                    }
+                })
+
+                let e = this.getFolder() + 'Unread';
+                bus.$emit(e, sum);
+                
+            }
         }
     }
 }
