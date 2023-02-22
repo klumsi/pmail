@@ -7,6 +7,7 @@ import im.bzh.service.MailService;
 import im.bzh.service.UserService;
 import im.bzh.utils.Shell;
 import im.bzh.vo.DraftVO;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.apache.tomcat.util.http.fileupload.util.mime.MimeUtility;
 import org.simplejavamail.api.email.AttachmentResource;
 import org.simplejavamail.api.email.Email;
@@ -20,12 +21,14 @@ import org.simplejavamail.mailer.MailerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -38,6 +41,9 @@ public class MailServiceImpl implements MailService {
 
     @Value("${mail.host}")
     private String host;
+
+    @Value("${mail.root-path}")
+    private String rootPath;
 
     @Value("${mail.file-upload-path}")
     private String uploadPath;
@@ -194,8 +200,43 @@ public class MailServiceImpl implements MailService {
         String temp = Arrays.toString(ids);
         String idsStr = temp.substring(1, temp.length() - 1).replace(" ", "");
         String cmd = "maddy imap-msgs move --uid " + username + "@" + domain + " " + folder + " " + idsStr + " " + destination;
+
+        if ("Junk".equals(destination)) {
+            String rawMail = getRawMail(username, folder, Long.valueOf(ids[0]));
+            String md5 = DigestUtils.md5DigestAsHex(rawMail.getBytes());
+            String path = rootPath + "/filter/bayes/dataset/raw/stage/spam/" + md5;
+            File file = new File(path);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            fileOutputStream.write(rawMail.getBytes());
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } else if ("Junk".equals(folder) && "INBOX".equals(destination)) {
+            String rawMail = getRawMail(username, folder, Long.valueOf(ids[0]));
+            String md5 = DigestUtils.md5DigestAsHex(rawMail.getBytes());
+            String path = rootPath + "/filter/bayes/dataset/raw/stage/ham/" + md5;
+            File file = new File(path);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            fileOutputStream.write(rawMail.getBytes());
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        }
+
         Shell.exec(cmd, null);
+
         return true;
+    }
+
+    private String getRawMail(String username, String folder, Long id) throws Exception{
+        folder = formatFolderName(folder);
+        String cmd = "maddy imap-msgs dump --uid " + username + "@" + domain + " " + folder + " " + id;
+        String mailStr = Shell.exec(cmd, null);
+        return mailStr;
     }
 
     @Override
@@ -203,7 +244,6 @@ public class MailServiceImpl implements MailService {
         folder = formatFolderName(folder);
         String cmd = "maddy imap-msgs dump --uid " + username + "@" + domain + " " + folder + " " + id;
         String mailStr = Shell.exec(cmd, null);
-
         Email email = EmailConverter.emlToEmail(mailStr);
         String subject = email.getSubject();
         String content = email.getHTMLText();

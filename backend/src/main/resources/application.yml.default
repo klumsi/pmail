@@ -17,4 +17,5 @@ mail:
   domain:
   host:
   enable-registration:
+  root-path:
   file-upload-path:
