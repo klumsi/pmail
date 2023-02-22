@@ -202,29 +202,33 @@ public class MailServiceImpl implements MailService {
         String cmd = "maddy imap-msgs move --uid " + username + "@" + domain + " " + folder + " " + idsStr + " " + destination;
 
         if ("Junk".equals(destination)) {
-            String rawMail = getRawMail(username, folder, Long.valueOf(ids[0]));
-            String md5 = DigestUtils.md5DigestAsHex(rawMail.getBytes());
-            String path = rootPath + "/filter/bayes/dataset/raw/stage/spam/" + md5;
-            File file = new File(path);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            if (!file.exists()) {
-                file.createNewFile();
+            for (Integer id : ids) {
+                String rawMail = getRawMail(username, folder, Long.valueOf(id));
+                String md5 = DigestUtils.md5DigestAsHex(rawMail.getBytes());
+                String path = rootPath + "/filter/bayes/dataset/raw/stage/spam/" + md5;
+                File file = new File(path);
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                fileOutputStream.write(rawMail.getBytes());
+                fileOutputStream.flush();
+                fileOutputStream.close();
             }
-            fileOutputStream.write(rawMail.getBytes());
-            fileOutputStream.flush();
-            fileOutputStream.close();
         } else if ("Junk".equals(folder) && "INBOX".equals(destination)) {
-            String rawMail = getRawMail(username, folder, Long.valueOf(ids[0]));
-            String md5 = DigestUtils.md5DigestAsHex(rawMail.getBytes());
-            String path = rootPath + "/filter/bayes/dataset/raw/stage/ham/" + md5;
-            File file = new File(path);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            if (!file.exists()) {
-                file.createNewFile();
+            for (Integer id : ids) {
+                String rawMail = getRawMail(username, folder, Long.valueOf(id));
+                String md5 = DigestUtils.md5DigestAsHex(rawMail.getBytes());
+                String path = rootPath + "/filter/bayes/dataset/raw/stage/ham/" + md5;
+                File file = new File(path);
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                fileOutputStream.write(rawMail.getBytes());
+                fileOutputStream.flush();
+                fileOutputStream.close();
             }
-            fileOutputStream.write(rawMail.getBytes());
-            fileOutputStream.flush();
-            fileOutputStream.close();
         }
 
         Shell.exec(cmd, null);
