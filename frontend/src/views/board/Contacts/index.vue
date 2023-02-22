@@ -201,7 +201,7 @@ export default {
             })
         }
     },
-    beforeCreate() {
+    created() {
         bus.$on('search', val => {
             this.search = val;
         });

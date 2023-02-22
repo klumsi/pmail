@@ -25,7 +25,7 @@ export default {
             bus.$emit("search", this.q);
         },
     },
-    beforeCreate() {
+    created() {
         bus.$on("search", val => {
             this.q = val;
         });
